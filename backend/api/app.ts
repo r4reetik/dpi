@@ -13,10 +13,7 @@ app.use(cors({ origin: "*" }));
 
 const providers = new Map<number, ethers.providers.Provider>([
   [5, new ethers.providers.JsonRpcProvider(process.env.ETHEREUM_GOERLI_URL!)],
-  [
-    80001,
-    new ethers.providers.JsonRpcProvider(process.env.POLYGON_TESTNET_URL!),
-  ],
+  [80001, new ethers.providers.JsonRpcProvider(process.env.POLYGON_TESTNET_URL!)],
 ]);
 
 const FACTORY_ABI = [
@@ -142,9 +139,7 @@ interface Transaction {
 
 function getProvider(chainID: number): ethers.providers.Provider {
   const provider = providers.get(chainID);
-  return provider
-    ? provider
-    : new ethers.providers.JsonRpcProvider("http://localhost:8545");
+  return provider ? provider : new ethers.providers.JsonRpcProvider("http://localhost:8545");
 }
 
 function getFactoryAddresses(chainID: number): string {
@@ -164,11 +159,7 @@ function getFactory(chainID: number): ECDSAWalletFactory {
 }
 
 function getWallet(address: string, chainID: number): IWallet {
-  return new ethers.Contract(
-    address,
-    WALLET_ABI_EXACT,
-    getSigner(chainID)
-  ) as IWallet;
+  return new ethers.Contract(address, WALLET_ABI_EXACT, getSigner(chainID)) as IWallet;
 }
 
 async function getSmartWallet(
@@ -197,10 +188,7 @@ function getSigner(chainID: number): ethers.Signer {
   return new ethers.Wallet(process.env.PRIVATE_KEY!, getProvider(chainID)!);
 }
 
-async function getNonceMap(
-  address: string,
-  id: string
-): Promise<Map<string, BigNumberish>> {
+async function getNonceMap(address: string, id: string): Promise<Map<string, BigNumberish>> {
   let nonceMap = new Map<string, number>();
   providers.forEach(async (provider, chainId) => {
     let nonce: number = 0;
@@ -234,9 +222,7 @@ app.get("/addresses/:address", async (req, res) => {
     const smartWallet = await getSmartWallet(signerAddress, id, 1);
     res.status(200).send({
       address: smartWallet.address,
-      nonces: JSON.stringify(
-        Object.fromEntries(await getNonceMap(signerAddress, id))
-      ),
+      nonces: JSON.stringify(Object.fromEntries(await getNonceMap(signerAddress, id))),
     });
     return;
   }
@@ -284,6 +270,14 @@ app.post("/transactions/:address", async (req, res) => {
   const walletTx = await wallet.wallet!.exec(tx.userOps, tx.signature);
   const reciept = await walletTx.wait(1);
   res.status(201).send({ txHash: reciept.transactionHash });
+});
+
+app.post("/createWallet", async (req, res) => {
+  const chainid = parseInt(req.query.chainId!.toString());
+  const id = req.body.id ? req.body.id.toString() : "0";
+  const addr = req.body.address;
+  const wallet = await getSmartWallet(addr, id, chainid, true);
+  res.status(201).send({ address: wallet.address });
 });
 
 app.listen(port, async () => {
