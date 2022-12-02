@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ConnectWallet from "../components/ConnectWallet";
+import ConnectWallet from "../components/ConnectWallet/ConnectWallet";
 
 type PageType = "connectWallet" | "pay" | "payReview";
 

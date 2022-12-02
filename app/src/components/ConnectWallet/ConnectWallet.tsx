@@ -1,6 +1,6 @@
 import { useWeb3React } from "@web3-react/core";
-import React from "react";
-import { MetaMask } from "../constants/WalletInfo";
+import React, { useState } from "react";
+import { MetaMask } from "../../constants/WalletInfo";
 
 function ConnectWallet() {
   const { activate } = useWeb3React();
