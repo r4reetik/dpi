@@ -1,14 +1,10 @@
-import { useWeb3React } from "@web3-react/core";
+import { useState } from "react";
+import ConnectWallet from "../components/ConnectWallet";
 
-import { MetaMask } from "../constants/WalletInfo";
+type PageType = "connectWallet" | "pay" | "payReview";
 
 export default function Home() {
-  const context = useWeb3React();
+  const [page, setPage] = useState<PageType>("connectWallet");
 
-  return (
-    <div className={""}>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-      <button onClick={() => context.activate(MetaMask)}>connect wallet</button>
-    </div>
-  );
+  return <div>{page === "connectWallet" && <ConnectWallet />}</div>;
 }
