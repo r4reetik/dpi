@@ -7,7 +7,7 @@ function ConnectWallet() {
 
   return (
     <div className={""}>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <h1 className='text-3xl font-bold underline'>Hello world!</h1>
       <button onClick={() => activate(MetaMask)}>connect wallet</button>
     </div>
   );
