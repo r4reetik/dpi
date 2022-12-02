@@ -12,5 +12,5 @@ export default function Home() {
     return () => {};
   }, []);
 
-  return <div>{page === "connectWallet" && <ConnectWallet />}</div>;
+  return <div>{page === "connectWallet" && <ConnectWallet next={() => setPage("pay")} />}</div>;
 }

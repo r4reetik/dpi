@@ -13,15 +13,18 @@ import {
 import { getEnsNameFromAddress } from "../utils/ens";
 import { addNewUser, db, getAddressData } from "../utils/firebase";
 
-const Context = createContext({});
+interface PayTcContextType {
+  signIn: (_mmAddress: string) => Promise<void>;
+  isInitialized: boolean;
+}
+
+const Context = createContext<PayTcContextType>({} as PayTcContextType);
 
 const PayTCProvider = ({ children }: any) => {
-  const { chainId } = useWeb3React();
-
   const [mmAddress, setMmAddress] = useState<string | null>(null);
   const [swAddress, setSwAddress] = useState<string | null>(null);
 
-  const isLoggedIn = !!swAddress;
+  const isInitialized = !!swAddress;
 
   useEffect(() => {
     return () => {};
@@ -29,21 +32,24 @@ const PayTCProvider = ({ children }: any) => {
 
   const signIn = async (_mmAddress: string) => {
     const data = await getAddressData("mmAddress", _mmAddress);
+    let _swAddress = null;
     if (data) {
       // old account
-      const { swAddress: _swAddress } = data;
-      setSwAddress(_swAddress);
+      const { swAddress: swa } = data;
+      _swAddress = swa;
     } else {
       // new account
 
-      const _swAddress = ""; // make api call
+      const swa = ""; // make api call
       const ens = await getEnsNameFromAddress(_mmAddress);
-      await addNewUser(_mmAddress, _swAddress, ens);
+      await addNewUser(_mmAddress, swa, ens);
+      _swAddress = swa;
     }
     setMmAddress(_mmAddress);
+    setSwAddress(_swAddress);
   };
 
-  return <Context.Provider value={{}}>{children}</Context.Provider>;
+  return <Context.Provider value={{ signIn, isInitialized }}>{children}</Context.Provider>;
 };
 
 const usePayTC = () => {
