@@ -12,6 +12,7 @@ import {
 } from "react";
 import { SmartWalletBaseUrl } from "../constants/APIs";
 import { ChainIdToNetwork } from "../constants/ChainIdNetwork";
+import { Tokens, TokenType } from "../constants/Tokens";
 import { SmartWallet } from "../pages";
 import { get } from "../utils/axios";
 
@@ -20,7 +21,7 @@ import { addNewUser, getAddressData } from "../utils/firebase";
 interface PayTcContextType {
   signIn: (_mmAddress: string) => Promise<void>;
   isInitialized: boolean;
-  balances: { chainId: number; balance: string; symbol: string }[];
+  tokens: { [x: string]: TokenType };
   fullScreenLoading: boolean;
   recipient: string | null;
   setFullScreenLoading: Dispatch<SetStateAction<boolean>>;
@@ -36,7 +37,7 @@ const Context = createContext<PayTcContextType>({} as PayTcContextType);
 const PayTCProvider = ({ children }: any) => {
   const { chainId, account } = useWeb3React();
   const [swAddress, setSwAddress] = useState<string | null>(null);
-  const [balances, setBalances] = useState<any>();
+  const [tokens, setTokens] = useState(Tokens);
   const [fullScreenLoading, setFullScreenLoading] = useState(false);
   const [recipient, setRecipient] = useState<string | null>(null);
 
@@ -44,30 +45,34 @@ const PayTCProvider = ({ children }: any) => {
 
   const isInitialized = !!swAddress;
 
-  const fetchAndSetBalances = useCallback(async () => {
-    if (!swAddress) return;
-    const _balances = []; // SW - 0x1085d0db6c015D3Ec73652e6Bb2790fC9A5E0464 // 0xDd66499a43bE05730Ec97a2aB25c1B534B46e8c1
-    for (const _chainId of Object.keys(ChainIdToNetwork)) {
-      const data = await get(
-        `https://api.covalenthq.com/v1/${_chainId}/address/${swAddress}/balances_v2/?key=${process.env.NEXT_PUBLIC_COVALENT_API_KEY}`
-      );
+  const fetchAndSetBalances = useCallback(
+    async (_swAddress?: string) => {
+      const localSwAddress = _swAddress ?? swAddress;
+      if (!localSwAddress) return;
+      // const _balances = []; // SW - 0x1085d0db6c015D3Ec73652e6Bb2790fC9A5E0464 // 0xDd66499a43bE05730Ec97a2aB25c1B534B46e8c1
+      const _tokens = { ...Tokens };
+      for (const _chainId of Object.keys(ChainIdToNetwork)) {
+        const data = await get(
+          `https://api.covalenthq.com/v1/${_chainId}/address/${localSwAddress}/balances_v2/?key=${process.env.NEXT_PUBLIC_COVALENT_API_KEY}`
+        );
 
-      if (data) {
-        // @ts-ignore
-        const { items } = data.data;
-        for (const _t of items) {
-          if (_t.balance !== "0") {
-            _balances.push({
-              symbol: _t.contract_ticker_symbol,
-              chainId: _chainId,
-              balance: _t.balance,
-            });
+        if (data) {
+          // @ts-ignore
+          const { items } = data.data;
+          for (const _t of items) {
+            if (_t.balance !== "0") {
+              const contractAddress = _t.contract_address.toUpperCase();
+              if (_tokens[contractAddress]) _tokens[contractAddress].balance = _t.balance;
+            }
           }
         }
       }
-    }
-    setBalances(_balances);
-  }, [swAddress]);
+
+      setTokens(_tokens);
+      return _tokens;
+    },
+    [swAddress]
+  );
 
   const getOrDeploySmartWallet = useCallback(
     async (address: string, chainId: number): Promise<SmartWallet> => {
@@ -90,8 +95,8 @@ const PayTCProvider = ({ children }: any) => {
         await addNewUser(_mmAddress, swa);
       }
 
+      await fetchAndSetBalances(swa);
       setSwAddress(swa);
-      await fetchAndSetBalances();
       setFullScreenLoading(false);
     },
     [chainId, fetchAndSetBalances, getOrDeploySmartWallet]
@@ -107,7 +112,7 @@ const PayTCProvider = ({ children }: any) => {
       value={{
         signIn,
         isInitialized,
-        balances,
+        tokens,
         fullScreenLoading,
         setFullScreenLoading,
         selectedToken,

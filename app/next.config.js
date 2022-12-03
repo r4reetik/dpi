@@ -10,10 +10,8 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: [
-      "static.debank.com",
-    ],
+    domains: ["static.debank.com", "icons.iconarchive.com", "tokens.1inch.io"],
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
