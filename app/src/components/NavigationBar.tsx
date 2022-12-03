@@ -11,7 +11,7 @@ const NavigationBar = () => {
     <nav className='w-full'>
       <div className='relative grid items-center grid-cols-2 lg:grid-cols-[0.5fr_1fr_0.5fr] lg:px-12'>
         <div className='flex justify-center align-middle py-4 xs:px-0 xs:py-6'>
-            <Image src={Logo} alt="logo" className='w-8 h-8 xs:hidden' />
+            <Image src={Logo} alt="logo" className='w-8 h-8' />
             <span className="text-3xl italic  text-primary font-extrabold">
                &nbsp;DPI
             </span>
