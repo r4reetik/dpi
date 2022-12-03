@@ -1,5 +1,8 @@
 import { useWeb3React } from "@web3-react/core";
 
+import { ethers } from "ethers";
+import { AbiCoder } from "ethers/lib/utils";
+
 import {
   createContext,
   Dispatch,
@@ -15,7 +18,7 @@ import { ChainIdToNetwork } from "../constants/ChainIdNetwork";
 import { Tokens, TokenType } from "../constants/Tokens";
 import { MetaMask } from "../constants/WalletInfo";
 import { SmartWallet } from "../pages";
-import { get } from "../utils/axios";
+import { get, post } from "../utils/axios";
 
 import { addNewUser, getAddressData } from "../utils/firebase";
 
@@ -102,6 +105,43 @@ const PayTCProvider = ({ children }: any) => {
     },
     [chainId, fetchAndSetBalances, getOrDeploySmartWallet]
   );
+
+  const submitTransfer = async (recipientSwAddress: string, amount: string) => {
+    if (!selectedToken) return;
+
+    const recipientData = await getAddressData("swAddress", recipientSwAddress);
+    if (!recipientData) return;
+
+    const targetDomainId = !recipientData.defaultChainId
+      ? selectedToken.domainId
+      : recipientData.defaultChainId === 5
+      ? "1735353714"
+      : "9991";
+
+    const { address: tokenAddress } = selectedToken;
+    const res: any = await post(`${SmartWalletBaseUrl}/getTypedData`, {
+      domainID: targetDomainId,
+      address: swAddress,
+      chainID: chainId,
+      recipient: recipientSwAddress,
+      asset: tokenAddress,
+      delegate: swAddress,
+      amount,
+      slippage: "10",
+    });
+    const provider = new ethers.providers.Web3Provider((window as any).ethereum as any, "any");
+
+    const signature = await provider.getSigner()._signTypedData(res.domain, res.types, res.value);
+    const signatureEncoded = new AbiCoder().encode(["uint256", "bytes"], [chainId, signature]);
+    const rrr = await post(`${SmartWalletBaseUrl}/transactions`, {
+      chainID: chainId,
+      signature: signatureEncoded,
+      userOps: res.userOps,
+      address: swAddress, // my sw address?
+    });
+    console.log(rrr);
+    // TODO: show toast saying tx was a success
+  };
 
   useEffect(() => {
     if (!isInitialized && account) signIn(account);
