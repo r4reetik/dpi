@@ -5,7 +5,7 @@ import PayReview from "../components/Pay/PayReview";
 import RecipientAddressInput from "../components/RecipientAddressInput/RecipientAddressInput";
 import { Tokens } from "../constants/Tokens";
 
-type PageType = "connectWallet" | "pay" | "payReview" | "input";
+type PageType = "connectWallet" | "pay" | "reviewPay" | "inputRecipient" | "amountRecipient";
 
 export interface SmartWallet {
   address: string;
@@ -18,9 +18,11 @@ export default function Home() {
   return (
     <div>
       {page === "connectWallet" && <ConnectWallet next={() => setPage("pay")} />}
-      {page === "pay" && <Pay next={() => setPage("input")} />}
-      {page === "input" && <RecipientAddressInput />}
-      {page === "payReview" && <PayReview token = {Tokens[5][0]}/> }
+      {page === "pay" && <Pay next={() => setPage("inputRecipient")} />}
+      {page === "inputRecipient" && (
+        <RecipientAddressInput next={() => setPage("amountRecipient")} />
+      )}
+      {page === "amountRecipient" && <PayReview next={() => setPage("reviewPay")} />}
     </div>
   );
 }

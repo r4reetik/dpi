@@ -26,6 +26,8 @@ interface PayTcContextType {
   setFullScreenLoading: Dispatch<SetStateAction<boolean>>;
 
   setRecipient: Dispatch<SetStateAction<string | null>>;
+
+  selectedToken: any;
   setSelectedToken: Dispatch<SetStateAction<any>>;
 }
 
@@ -108,6 +110,7 @@ const PayTCProvider = ({ children }: any) => {
         balances,
         fullScreenLoading,
         setFullScreenLoading,
+        selectedToken,
         setSelectedToken,
         recipient,
         setRecipient,

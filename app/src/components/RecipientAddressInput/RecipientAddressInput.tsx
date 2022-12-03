@@ -5,8 +5,8 @@ import { getAddressData } from "../../utils/firebase";
 import Input from "./Input";
 import ScanQR from "./ScanQR";
 
-function RecipientAddressInput() {
-  const { setFullScreenLoading } = usePayTC();
+function RecipientAddressInput({ next }: { next: () => void }) {
+  const { setFullScreenLoading, setRecipient } = usePayTC();
 
   const resolve = async (text: string) => {
     setFullScreenLoading(true);
@@ -30,8 +30,9 @@ function RecipientAddressInput() {
       } else recipientSwAddress = mmData.swAddress;
     }
 
-    console.log("final ", recipientSwAddress);
+    setRecipient(text);
     setFullScreenLoading(false);
+    next();
   };
 
   return (
