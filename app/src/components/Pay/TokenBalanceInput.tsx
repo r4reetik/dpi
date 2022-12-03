@@ -55,7 +55,7 @@ const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
               className='object-cover object-center w-full'
             />
           </div>
-          <div>
+          <div className=''>
             <div className='flex items-center font-bold'>
               <span className='tracking-wide md:text-lg'>{token.symbol}</span>
               <button
@@ -66,7 +66,7 @@ const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
               </button>
             </div>
 
-            <p className={`font-semibold flex justify-center text-grey-500 text-sm tracking-wide`}>
+            <p className={`font-semibold flex self-start text-grey-500 text-sm tracking-wide`}>
               {`${"Balance"}: ${""}`}
             </p>
           </div>

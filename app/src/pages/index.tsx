@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ConnectWallet from "../components/ConnectWallet/ConnectWallet";
 import Pay from "../components/Pay/Pay";
-import AmountInput from "../components/Pay/PayReview";
+import AmountInput from "../components/Pay/AmountInput";
 import RecipientAddressInput from "../components/RecipientAddressInput/RecipientAddressInput";
 
 type PageType = "connectWallet" | "pay" | "reviewPay" | "inputRecipient" | "amountRecipient";

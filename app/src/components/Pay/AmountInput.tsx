@@ -17,7 +17,7 @@ const AmountInput = ({ next }: { next: () => void }) => {
         <div className='flex flex-col gap-1'>
           <div className='flex flex-col md:min-h-[72px] bg-black-900 md:bg-black-800 rounded-xl'>
             <div className='flex justify-between gap-4 px-2 py-4 sm:items-center sm:justify-between sm:flex-row '>
-              Recipient : {recipient}
+              Recipient: {recipient}
             </div>
           </div>
         </div>
