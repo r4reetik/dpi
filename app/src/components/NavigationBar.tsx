@@ -21,10 +21,10 @@ const NavigationBar = () => {
 
   return (
     <nav className='w-full'>
-      <div className='relative grid items-center grid-cols-2'>
-        <div className='flex justify-center items-center py-4 xs:px-0 xs:py-6'>
+      <div className='relative grid items-center grid-cols-2 lg:px-12'>
+        <div className='flex justify-center py-4 align-middle xs:px-0 xs:py-6'>
           <Image src={Logo} alt='logo' className='w-8 h-8' />
-          <span className='text-3xl italic text-primary font-extrabold'>&nbsp;DPI</span>
+          <span className='text-3xl italic font-extrabold text-primary'>&nbsp;DPI</span>
         </div>
         <div className='flex items-center justify-center'>
           <div className='relative inline-block text-left '>

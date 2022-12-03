@@ -1,78 +1,56 @@
-export const Tokens = {
-  5: [
-    {
-      address: "0x0000000000000000000000000000000000000000",
-      chainId: 5,
-      chain : "Ethereum",
-      symbol: "ETH",
-      decimals: 18,
-      name: "ETH",
-      priceUSD: "1286.84",
-      logoURI:
-        "https://static.debank.com/image/token/logo_url/eth/935ae4e4d1d12d59a99717a24f2540b5.png",
-      coinKey: "ETH",
-    },
-    {
-      address: "0xb5B640E6414b6DeF4FC9B3C1EeF373925effeCcF",
-      chainId: 5,
-      chain : "Ethereum",
-      symbol: "USDC",
-      decimals: 6,
-      name: "USD Coin",
-      priceUSD: "1",
-      logoURI:
-        "https://static.debank.com/image/coin/logo_url/usdc/e87790bfe0b3f2ea855dc29069b38818.png",
-      coinKey: "USDC",
-    },
-    {
-      address: "0x64ef393b6846114bad71e2cb2ccc3e10736b5716",
-      chainId: 5,
-      chain : "Ethereum",
-      symbol: "USDT",
-      decimals: 6,
-      name: "Tether USD",
-      priceUSD: "1",
-      logoURI:
-        "https://static.debank.com/image/coin/logo_url/usdt/23af7472292cb41dc39b3f1146ead0fe.png",
-      coinKey: "USDT",
-    },
-  ],
-  80001: [
-    {
-      address: "0xa6fa4fb5f76172d178d61b04b0ecd319c5d1c0aa",
-      chainId: 80001,
-      chain : "Polygon",
-      symbol: "ETH",
-      decimals: 18,
-      name: "ETH",
-      priceUSD: "1286.84",
-      logoURI:
-        "https://static.debank.com/image/token/logo_url/eth/935ae4e4d1d12d59a99717a24f2540b5.png",
-      coinKey: "ETH",
-    },
-    {
-      address: "0xdA5289fCAAF71d52a80A254da614a192b693e977",
-      chainId: 80001,
-      chain : "Polygon",
-      symbol: "USDC",
-      decimals: 6,
-      name: "USD Coin",
-      priceUSD: "1",
-      logoURI:
-        "https://static.debank.com/image/coin/logo_url/usdc/e87790bfe0b3f2ea855dc29069b38818.png",
-      coinKey: "USDC",
-    },
-    {
-      address: "0xeaBc4b91d9375796AA4F69cC764A4aB509080A58",
-      chainId: 80001,
-      chain : "Polygon",
-      symbol: "USDT",
-      decimals: 6,
-      name: "Tether USD",
-      priceUSD: "1",
-      logoURI:
-        "https://static.debank.com/image/coin/logo_url/usdt/23af7472292cb41dc39b3f1146ead0fe.png",
-      coinKey: "USDT",
-    },
-  ],
+export type TokenType = {
+  address: string;
+  chainId: number;
+  symbol: string;
+  decimals: number;
+  priceUSD: number;
+  image: string;
+  chain: string;
+  domainId: string;
+  balance?: string;
+};
+
+export const Tokens: { [x: string]: TokenType } = {
+  "0xeDb95D8037f769B72AAab41deeC92903A98C9E16": {
+    symbol: "TEST",
+    chain: "Polygon",
+    chainId: 80001,
+    image:
+      "https://icons.iconarchive.com/icons/cjdowner/cryptocurrency-flat/256/Ethereum-ETH-icon.png",
+    domainId: "9991",
+    address: "0xeDb95D8037f769B72AAab41deeC92903A98C9E16",
+    decimals: 18,
+    priceUSD: 0.924,
+  },
+  "0xFD2AB41e083c75085807c4A65C0A14FDD93d55A9": {
+    symbol: "WETH",
+    chain: "Polygon",
+    chainId: 80001,
+    image: "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
+    domainId: "9991",
+    address: "0xFD2AB41e083c75085807c4A65C0A14FDD93d55A9",
+    decimals: 18,
+    priceUSD: 1271.43,
+  },
+  ["0x7ea6eA49B0b0Ae9c5db7907d139D9Cd3439862a1".toUpperCase()]: {
+    symbol: "TEST",
+    chain: "Ethereum",
+    chainId: 5,
+    image:
+      "https://icons.iconarchive.com/icons/cjdowner/cryptocurrency-flat/256/Ethereum-ETH-icon.png",
+    domainId: "1735353714",
+    address: "0x7ea6eA49B0b0Ae9c5db7907d139D9Cd3439862a1",
+    priceUSD: 0.924,
+    decimals: 18,
+  },
+  ["0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6".toUpperCase()]: {
+    symbol: "WETH",
+    chain: "Ethereum",
+    chainId: 5,
+    image: "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
+    domainId: "1735353714",
+    address: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+    decimals: 18,
+    priceUSD: 1271.43,
+  },
 };

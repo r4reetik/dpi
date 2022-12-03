@@ -1,6 +1,9 @@
 import { ethers } from "ethers";
 
-const provider = new ethers.providers.InfuraProvider("goerli", "8127a04bb3ea4cd39511696573cefe56");
+export const provider = new ethers.providers.InfuraProvider(
+  "goerli",
+  "8127a04bb3ea4cd39511696573cefe56"
+);
 
 export const getEnsNameFromAddress = async (metamaskAddress: string, chainId = 5) => {
   const address = ethers.utils.getAddress(metamaskAddress);
