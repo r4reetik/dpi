@@ -18,5 +18,14 @@ export default function Home() {
   // useGateway(async (status, hash) => {
   //   console.log(status, hash);
   // });
-  return <ConnectWallet next={() => setPage("pay")} />;
+  return (
+    <div>
+      {page === "connectWallet" && <ConnectWallet next={() => setPage("pay")} />}
+      {page === "pay" && <Pay next={() => setPage("inputRecipient")} />}
+      {page === "inputRecipient" && (
+        <RecipientAddressInput next={() => setPage("amountRecipient")} />
+      )}
+      {page === "amountRecipient" && <AmountInput reset={() => setPage("pay")} />}
+    </div>
+  );
 }
