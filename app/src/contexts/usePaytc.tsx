@@ -14,6 +14,7 @@ import { SmartWalletBaseUrl } from "../constants/APIs";
 import { ChainIdToNetwork } from "../constants/ChainIdNetwork";
 import { SmartWallet } from "../pages";
 import { get } from "../utils/axios";
+import { getEnsOrAddress } from "../utils/ens";
 
 import { addNewUser, getAddressData } from "../utils/firebase";
 
@@ -22,7 +23,7 @@ interface PayTcContextType {
   isInitialized: boolean;
   balances: { chainId: number; balance: string; symbol: string }[];
   fullScreenLoading: boolean;
-
+  ensOrAddress : string | null;
   setSelectedToken: Dispatch<SetStateAction<any>>;
 }
 
@@ -31,6 +32,7 @@ const Context = createContext<PayTcContextType>({} as PayTcContextType);
 const PayTCProvider = ({ children }: any) => {
   const { chainId, account } = useWeb3React();
   const [swAddress, setSwAddress] = useState<string | null>(null);
+  const [ensOrAddress, setEnsOrAddress] = useState<string | null>(null);
   const [balances, setBalances] = useState<any>();
   const [fullScreenLoading, setFullScreenLoading] = useState(false);
 
@@ -39,6 +41,7 @@ const PayTCProvider = ({ children }: any) => {
   const isInitialized = !!swAddress;
 
   const fetchAndSetBalances = useCallback(async () => {
+    setEnsOrAddress(await getEnsOrAddress(account as string))
     if (!swAddress) return;
     const _balances = []; // SW - 0x1085d0db6c015D3Ec73652e6Bb2790fC9A5E0464 // 0xDd66499a43bE05730Ec97a2aB25c1B534B46e8c1
     for (const _chainId of Object.keys(ChainIdToNetwork)) {
@@ -98,7 +101,7 @@ const PayTCProvider = ({ children }: any) => {
 
   return (
     <Context.Provider
-      value={{ signIn, isInitialized, balances, fullScreenLoading, setSelectedToken }}>
+      value={{ signIn, ensOrAddress, isInitialized, balances, fullScreenLoading, setSelectedToken }}>
       {children}
     </Context.Provider>
   );
