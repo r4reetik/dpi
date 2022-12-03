@@ -13,9 +13,9 @@ function ConnectWallet({ next }: { next: () => void }) {
   }, [isInitialized, next]);
 
   return (
-    <div className='mt-40'>
+    <div className='mt-30'>
       <button
-        className='text-xl bg-primary p-4 rounded-lg flex flex-col gap-1 overflow-y-auto max-h-[450px]'
+        className='text-xl bg-primary p-4 mx-auto rounded-lg flex flex-col gap-1 overflow-y-auto max-h-[450px]'
         onClick={() => activate(MetaMask)}>
         Connect Wallet
       </button>
