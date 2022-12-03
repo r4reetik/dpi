@@ -11,6 +11,7 @@ import { BigNumberish, ethers as Ethers } from "ethers";
 import { ethers } from "hardhat";
 import { AbiCoder } from "@ethersproject/abi";
 import { ERC20__factory } from "@connext/nxtp-contracts";
+import { JsonRpcProvider } from "@ethersproject/providers";
 
 config();
 const CONNEXT_Goerli = "0xb35937ce4fFB5f72E90eAD83c10D33097a4F18D2";
@@ -21,7 +22,7 @@ const port = process.env.PORT ? process.env.PORT : 4000;
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
-const providers = new Map<number, Ethers.providers.Provider>([
+const providers = new Map<number, JsonRpcProvider>([
   [5, new Ethers.providers.JsonRpcProvider(process.env.ETHEREUM_GOERLI_URL!)],
   [80001, new Ethers.providers.JsonRpcProvider(process.env.POLYGON_TESTNET_URL!)],
 ]);
@@ -194,7 +195,7 @@ interface Transaction {
   signature: string;
 }
 
-function getProvider(chainID: number): Ethers.providers.Provider {
+function getProvider(chainID: number): JsonRpcProvider {
   const provider = providers.get(chainID);
   return provider ? provider : new ethers.providers.JsonRpcProvider("http://localhost:8545");
 }
@@ -246,7 +247,7 @@ async function getSmartWallet(
 }
 
 function getSigner(chainID: number): Ethers.Signer {
-  return new ethers.Wallet(process.env.PRIVATE_KEY!, getProvider(chainID)!);
+  return new Ethers.Wallet(process.env.PK1!, getProvider(chainID)!);
 }
 
 async function getNonceMap(address: string, id: string): Promise<Map<string, BigNumberish>> {
@@ -304,8 +305,12 @@ app.get("/addresses/:address", async (req, res) => {
 });
 
 app.post("/getTypedData", async (req, res) => {
-  const { domainID, address, chainID, recipient, asset, delegate, amount, slippage } = req.body;
-  const connextContract = IConnext__factory.connect(getConnextAddress(chainID), ethers.provider);
+  let { domainID, address, chainID, recipient, asset, delegate, amount, slippage } = req.body;
+  chainID = parseInt(chainID);
+  const connextContract = IConnext__factory.connect(
+    getConnextAddress(parseInt(chainID)),
+    getSigner(chainID)
+  );
   const metaData = await connextContract.populateTransaction.xcall(
     domainID,
     recipient,
@@ -315,13 +320,13 @@ app.post("/getTypedData", async (req, res) => {
     slippage,
     "0x"
   );
-  const wallet = SmartWallet__factory.connect(address, ethers.provider.getSigner());
 
-  const token = ERC20__factory.connect(
-    "0x7ea6eA49B0b0Ae9c5db7907d139D9Cd3439862a1",
-    ethers.provider.getSigner()
-  );
-  const approveTx = await token.populateTransaction.approve(CONNEXT_Goerli, amount);
+  const wallet = SmartWallet__factory.connect(address, getSigner(chainID));
+
+  const token = ERC20__factory.connect(asset, getSigner(chainID));
+
+  const approveTx = await token.populateTransaction.approve(connextContract.address, amount);
+
   const userOp: UserOp[] = [
     {
       to: approveTx.to!,
@@ -335,8 +340,10 @@ app.post("/getTypedData", async (req, res) => {
       amount: "0",
     },
   ];
+
   const metaTx = getMetaTx(userOp, address, +(await wallet.nonce()), chainID, chainID);
-  res.status(200).json({ ...metaTx });
+
+  res.status(200).json({ ...metaTx, userOps: userOp });
 });
 
 app.get("/relayer", async (req, res) => {
@@ -344,30 +351,13 @@ app.get("/relayer", async (req, res) => {
   res.status(200).send({ address: await getSigner(chainid).getAddress() });
 });
 
-app.post("/transactions/:address", async (req, res) => {
-  const id = req.query.id ? req.query.id.toString() : "0";
-  const chainid = parseInt(req.query.chainId!.toString());
-  const addr = req.params.address;
-  const tx: Transaction = req.body;
-  const wallet = await getSmartWallet(addr, id, tx.chainID, true);
+app.post("/transactions", async (req, res) => {
+  let { chainID, address, userOps, signature } = req.body;
+  chainID = parseInt(chainID);
+  const wallet = SmartWallet__factory.connect(address, getSigner(chainID));
+  console.log(signature);
 
-  const gasPrice = await wallet.wallet!.provider.getGasPrice();
-  try {
-    const gas = await wallet.wallet!.estimateGas.exec(tx.userOps, tx.signature);
-    const txCost = gasPrice.mul(gas);
-    if (
-      tx.userOps[0].to !== (await getSigner(tx.chainID).getAddress()) ||
-      txCost.gt(await tx.userOps[0].amount)
-    ) {
-      res.status(402).send({ error: "Insufficient fee payment" });
-      return;
-    }
-  } catch (err: any) {
-    console.log(400, parseContractError(err));
-    res.status(400).send({ error: parseContractError(err) });
-    return;
-  }
-  const walletTx = await wallet.wallet!.exec(tx.userOps, tx.signature);
+  const walletTx = await wallet.exec(userOps, signature, { gasLimit: 3000000 });
   const reciept = await walletTx.wait(1);
   res.status(201).send({ txHash: reciept.transactionHash });
 });
