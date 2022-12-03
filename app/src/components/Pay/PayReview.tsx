@@ -7,7 +7,7 @@ import TokenBalanceInput from "./TokenBalanceInput";
 const PayReview = ({ next }: { next: () => void }) => {
   const { recipient, selectedToken } = usePayTC();
   return (
-    <div className='flex flex-col justify-around gap-10 mt-10'>
+    <div className='flex flex-col items-stretch justify-around gap-8 mt-10 h-[90%]'>
       <ContentWrapper label={"You Send"}>
         <div className='flex flex-col gap-1'>
           <TokenBalanceInput token={selectedToken} />
@@ -22,6 +22,8 @@ const PayReview = ({ next }: { next: () => void }) => {
           </div>
         </div>
       </ContentWrapper>
+      <div className='grow' />
+
       <button className='text-xl bg-primary p-4 rounded-3xl max-h-[450px]'>Send</button>
     </div>
   );

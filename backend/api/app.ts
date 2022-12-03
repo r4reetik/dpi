@@ -1,20 +1,32 @@
 import { config } from "dotenv";
 import cors from "cors";
 import express from "express";
-import { BigNumberish, ethers } from "ethers";
-import { ECDSAWalletFactory, IWallet } from "../typechain-types";
+import {
+  ECDSAWalletFactory,
+  IConnext__factory,
+  IWallet,
+  SmartWallet__factory,
+} from "../typechain-types";
+import { BigNumberish, ethers as Ethers } from "ethers";
+import { ethers } from "hardhat";
+import { AbiCoder } from "@ethersproject/abi";
+import { ERC20__factory } from "@connext/nxtp-contracts";
 
 config();
+const CONNEXT_Goerli = "0xb35937ce4fFB5f72E90eAD83c10D33097a4F18D2";
+const CONNEXT_Polygon = "0xa2F2ed226d4569C8eC09c175DDEeF4d41Bab4627";
 
 const app = express();
 const port = process.env.PORT ? process.env.PORT : 4000;
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
-const providers = new Map<number, ethers.providers.Provider>([
-  [5, new ethers.providers.JsonRpcProvider(process.env.ETHEREUM_GOERLI_URL!)],
-  [80001, new ethers.providers.JsonRpcProvider(process.env.POLYGON_TESTNET_URL!)],
+const providers = new Map<number, Ethers.providers.Provider>([
+  [5, new Ethers.providers.JsonRpcProvider(process.env.ETHEREUM_GOERLI_URL!)],
+  [80001, new Ethers.providers.JsonRpcProvider(process.env.POLYGON_TESTNET_URL!)],
 ]);
+
+const getConnextAddress = (chainId: number) => (chainId === 5 ? CONNEXT_Goerli : CONNEXT_Polygon);
 
 const FACTORY_ABI = [
   "function createWallet(address _owner) external returns (address)",
@@ -120,6 +132,51 @@ const WALLET_ABI_EXACT = `[
   }
 ]`;
 
+export const getMetaTx = (
+  userOps: UserOp[],
+  smartWalletAddress: string,
+  nonce: number,
+  chainID: number,
+  signatureChainID: number
+) => {
+  const domain = {
+    name: "ECDSAWallet",
+    version: "0.0.1",
+    chainId: chainID,
+
+    verifyingContract: smartWalletAddress,
+  };
+
+  const types = {
+    UserOp: [
+      { name: "to", type: "address" },
+      { name: "amount", type: "uint256" },
+      { name: "data", type: "bytes" },
+    ],
+    ECDSAExec: [
+      { name: "userOps", type: "UserOp[]" },
+      { name: "nonce", type: "uint256" },
+      { name: "chainID", type: "uint256" },
+      { name: "sigChainID", type: "uint256" },
+    ],
+  };
+
+  const value = {
+    userOps: userOps,
+    nonce: nonce,
+    chainID: chainID,
+    sigChainID: signatureChainID,
+  };
+
+  // const signature = await ethers.provider.getSigner()._signTypedData(domain, types, value);
+  // const signatureEncoded = new AbiCoder().encode(
+  //   ["uint256", "bytes"],
+  //   [signatureChainID, signature]
+  // );
+
+  return { domain, types, value };
+};
+
 export interface SmartWallet {
   address: string;
   wallet?: IWallet;
@@ -128,7 +185,7 @@ export interface SmartWallet {
 export interface UserOp {
   to: string;
   amount: BigNumberish;
-  data: ethers.utils.BytesLike;
+  data: Ethers.utils.BytesLike;
 }
 
 interface Transaction {
@@ -137,7 +194,7 @@ interface Transaction {
   signature: string;
 }
 
-function getProvider(chainID: number): ethers.providers.Provider {
+function getProvider(chainID: number): Ethers.providers.Provider {
   const provider = providers.get(chainID);
   return provider ? provider : new ethers.providers.JsonRpcProvider("http://localhost:8545");
 }
@@ -172,8 +229,9 @@ async function getSmartWallet(
   let wallet: SmartWallet = {
     address: await factory.walletAddress(addr, nonce),
   };
-
   const code = await getProvider(chainID)!.getCode(wallet.address);
+  console.log(code);
+
   if (code === "0x") {
     if (!deploy) {
       return wallet;
@@ -187,7 +245,7 @@ async function getSmartWallet(
   return wallet;
 }
 
-function getSigner(chainID: number): ethers.Signer {
+function getSigner(chainID: number): Ethers.Signer {
   return new ethers.Wallet(process.env.PRIVATE_KEY!, getProvider(chainID)!);
 }
 
@@ -222,17 +280,20 @@ app.get("/addresses/:address", async (req, res) => {
   const id = req.query.id ? req.query.id.toString() : "0";
 
   if (!req.query.chainId) {
-    const smartWallet = await getSmartWallet(signerAddress, id, 1);
+    const smartWallet = await getSmartWallet(signerAddress, id, 5);
     res.status(200).send({
       address: smartWallet.address,
       nonces: JSON.stringify(Object.fromEntries(await getNonceMap(signerAddress, id))),
     });
     return;
   }
+  console.log(id);
+
   const smartWallet = await getSmartWallet(
     signerAddress,
     id,
-    parseInt(req.query.chainId.toString())
+    parseInt(req.query.chainId.toString()),
+    true
   );
 
   const nonce = smartWallet.wallet ? await smartWallet.wallet.nonce() : 0;
@@ -240,6 +301,42 @@ app.get("/addresses/:address", async (req, res) => {
     address: smartWallet.address,
     nonces: { [req.query.chainId.toString()]: nonce },
   });
+});
+
+app.post("/getTypedData", async (req, res) => {
+  const { domainID, address, chainID, recipient, asset, delegate, amount, slippage } = req.body;
+  const connextContract = IConnext__factory.connect(getConnextAddress(chainID), ethers.provider);
+  const metaData = await connextContract.populateTransaction.xcall(
+    domainID,
+    recipient,
+    asset,
+    delegate,
+    amount,
+    slippage,
+    "0x"
+  );
+  const wallet = SmartWallet__factory.connect(address, ethers.provider.getSigner());
+
+  const token = ERC20__factory.connect(
+    "0x7ea6eA49B0b0Ae9c5db7907d139D9Cd3439862a1",
+    ethers.provider.getSigner()
+  );
+  const approveTx = await token.populateTransaction.approve(CONNEXT_Goerli, amount);
+  const userOp: UserOp[] = [
+    {
+      to: approveTx.to!,
+      data: approveTx.data!,
+      amount: "0",
+    },
+
+    {
+      to: metaData.to!,
+      data: metaData.data!,
+      amount: "0",
+    },
+  ];
+  const metaTx = getMetaTx(userOp, address, +(await wallet.nonce()), chainID, chainID);
+  res.status(200).json({ ...metaTx });
 });
 
 app.get("/relayer", async (req, res) => {
@@ -273,14 +370,6 @@ app.post("/transactions/:address", async (req, res) => {
   const walletTx = await wallet.wallet!.exec(tx.userOps, tx.signature);
   const reciept = await walletTx.wait(1);
   res.status(201).send({ txHash: reciept.transactionHash });
-});
-
-app.post("/createWallet", async (req, res) => {
-  const chainid = parseInt(req.query.chainId!.toString());
-  const id = req.body.id ? req.body.id.toString() : "0";
-  const addr = req.body.address;
-  const wallet = await getSmartWallet(addr, id, chainid, true);
-  res.status(201).send({ address: wallet.address });
 });
 
 app.listen(port, async () => {
