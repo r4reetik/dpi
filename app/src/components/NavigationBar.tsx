@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { UilUserCircle } from "@iconscout/react-unicons";
-import { usePayTC } from "../contexts/usePaytc";
-import { getEnsOrAddress } from "../utils/ens";
 
 const NavigationBar = () => {
-  // const {mmAddress} = usePayTC();
-  // const [displayName,setDisplayName] = useState<string>();
-  // useEffect(()=>{
-  //     getENSOrAddress(mmAddress).then((res)=>{setDisplayName(res)})
-  // })
   return (
     <nav className='w-full'>
       <div className='relative grid items-center grid-cols-2 lg:grid-cols-[0.5fr_1fr_0.5fr] lg:px-12'>
