@@ -106,8 +106,24 @@ function hash(UserOp[] memory _userOps) internal pure returns (bytes32) {
     bytes32 private constant UserOp_TYPE_HASH =
         keccak256("UserOp(address to,uint256 amount,bytes data)");
 ```
+### Deterministic Address Generation
+- The smart wallet contract address is generated via the following :
+```
+return address(uint160(uint(keccak256(
+                abi.encodePacked(
+                    bytes1(0xff), 
+                    address(this), 
+                    keccak256(abi.encode(callID, _nonce)), 
+                    keccak256(abi.encodePacked(
+                            type(ERC1967Proxy).creationCode,
+                            abi.encode(_impl, _call)
+                    )))))));
+```
 
-The contract implementation can be found in /backend/contracts (https://github.com/r4reetik/dpi/tree/main/backend/contracts)
+* This ensure that the user receives the generated address as their smart walllet address no matter when the depeploy their contract.
+  * Funds can be transfered to address before a contract exists at the address and the funds will be available to the user when the contract is deployed.
+
+The contract implementations can be found in /backend/contracts (https://github.com/r4reetik/dpi/tree/main/backend/contracts)
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!--SIGNING DATA -->
@@ -161,7 +177,7 @@ const domain = {
 
 For both app and backend environment :
 
-1. yarn add
+1. yarn
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
