@@ -77,16 +77,16 @@
 <!-- ABOUT THE PROJECT -->
 # About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][screenshot]](https://example.com)
 
 DPI (yes it's inspired from UPI) stands for decentalized payment interface, it is a non-custodial payment interface for on chain payments.Users are provided with a single DPI ID which hold their assets and it the same for all the EVM based chains(ain't that cool 🤯).Powered by Connext to enable cross chain bridging DPI offers quick and resilient mode of transfers both on the host chain and for payments across chains.Payments are gasless which are verified and submitted through smart wallets.
 DPI operates on three layers :
 1. Smart wallet contract deployer :
 Smart wallets are deployed via a factory contract which ensures and predetermines the address of the smart wallet contract the user can deploy.
-2. Smart wallet contract : 
+1. Smart wallet contract : 
 Smart wallets contain exec() function which is provided with data in the form of user operations which are executed in a single transaction. ECDSASmartWallet is responisble for verifying signature for the data received from the user.The injected provider configured to any chain can be used to sign transactions for any other chain.
 
-3. DPI UX:
+1. DPI UX:
 This layer generates data for user operations ,displays data or context , gets them signed by the user and bundles them into a single call.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -191,6 +191,7 @@ For both app and backend environment :
 
 <!-- USAGE EXAMPLES -->
 # Usage
+![Architecture Diagram][architecture]
 
 DPI UX is implemented as a web app which can be used to send and receive payments across chains.As a payments interface it is non-custodial and the user is in full control of their assets.Transfers are the key feature of the app and it is powered by Connext to enable cross chain transfers.Push protocol is used to enable reliable transaction notification.Contracts are deployed on every EVM based chains and the user can deploy smart wallets on any of the supported chains.
 The user can :
@@ -239,4 +240,5 @@ This repo is a part of the project DPI (Decentralized Payment Interface) which i
 [push]:https://img.shields.io/badge/-Push-yellow
 [covalent-url]:https://www.covalenthq.com
 [covalent]:https://img.shields.io/badge/-Covalent-blue
+[architecture]: images/architecture.png
 
