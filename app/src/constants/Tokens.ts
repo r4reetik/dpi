@@ -1,8 +1,9 @@
-const Tokens = {
+export const Tokens = {
   5: [
     {
       address: "0x0000000000000000000000000000000000000000",
       chainId: 5,
+      chain : "Ethereum",
       symbol: "ETH",
       decimals: 18,
       name: "ETH",
@@ -14,6 +15,7 @@ const Tokens = {
     {
       address: "0xb5B640E6414b6DeF4FC9B3C1EeF373925effeCcF",
       chainId: 5,
+      chain : "Ethereum",
       symbol: "USDC",
       decimals: 6,
       name: "USD Coin",
@@ -25,6 +27,7 @@ const Tokens = {
     {
       address: "0x64ef393b6846114bad71e2cb2ccc3e10736b5716",
       chainId: 5,
+      chain : "Ethereum",
       symbol: "USDT",
       decimals: 6,
       name: "Tether USD",
@@ -38,6 +41,7 @@ const Tokens = {
     {
       address: "0xa6fa4fb5f76172d178d61b04b0ecd319c5d1c0aa",
       chainId: 80001,
+      chain : "Polygon",
       symbol: "ETH",
       decimals: 18,
       name: "ETH",
@@ -49,6 +53,7 @@ const Tokens = {
     {
       address: "0xdA5289fCAAF71d52a80A254da614a192b693e977",
       chainId: 80001,
+      chain : "Polygon",
       symbol: "USDC",
       decimals: 6,
       name: "USD Coin",
@@ -60,6 +65,7 @@ const Tokens = {
     {
       address: "0xeaBc4b91d9375796AA4F69cC764A4aB509080A58",
       chainId: 80001,
+      chain : "Polygon",
       symbol: "USDT",
       decimals: 6,
       name: "Tether USD",

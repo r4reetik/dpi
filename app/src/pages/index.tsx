@@ -1,8 +1,9 @@
 import { useState } from "react";
 import ConnectWallet from "../components/ConnectWallet/ConnectWallet";
 import Pay from "../components/Pay/Pay";
+import ScanQR from "../components/QR/ScanQR"
 
-type PageType = "connectWallet" | "pay" | "payReview";
+type PageType = "connectWallet" | "pay" | "payReview" | "scan";
 
 export interface SmartWallet {
   address: string;
@@ -16,6 +17,7 @@ export default function Home() {
     <div>
       {page === "connectWallet" && <ConnectWallet next={() => setPage("pay")} />}
       {page === "pay" && <Pay />}
+      {page === "scan" && <ScanQR/>}
     </div>
   );
 }
