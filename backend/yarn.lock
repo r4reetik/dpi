@@ -71,6 +71,60 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
+"@eth-optimism/contracts-bedrock@0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.10.0.tgz#45012a78db2e7f66463fb19d38f54a69d8fcd1e6"
+  integrity sha512-T4PxAX/Q8wNNspa+DRWvRuIpEA838768hoZbSFxBbK7uPz7Mu6cdThbKIAaVQc79ZPcuLTH9Me3bjAbi1ROQ0A==
+  dependencies:
+    "@eth-optimism/core-utils" "^0.11.0"
+    "@openzeppelin/contracts" "4.7.3"
+    "@openzeppelin/contracts-upgradeable" "4.7.3"
+    ethers "^5.7.0"
+    hardhat "^2.9.6"
+
+"@eth-optimism/contracts@0.5.38":
+  version "0.5.38"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts/-/contracts-0.5.38.tgz#9c55725a253a0c6be351b4823ec1f0af62df8315"
+  integrity sha512-VvPvTD6AKFIPZVwGRK1eDuhRS+WyUGemIiu7h9txpKitkXKpTqb4DscR6cul5Dl+JhonX36ZvnJmDIfF+KBY5A==
+  dependencies:
+    "@eth-optimism/core-utils" "0.11.0"
+    "@ethersproject/abstract-provider" "^5.7.0"
+    "@ethersproject/abstract-signer" "^5.7.0"
+
+"@eth-optimism/core-utils@0.11.0", "@eth-optimism/core-utils@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/core-utils/-/core-utils-0.11.0.tgz#cc0ac24fc49a6f5f411e3947d2d3bb5f49333d5a"
+  integrity sha512-/oTyC1sqZ/R97pRk+7cQJpZ6qwmJvqcym9coy9fZaqmIuFaZkjXQKz04lWUPL0zzh9zTN+2nMSB+kZReccmong==
+  dependencies:
+    "@ethersproject/abi" "^5.7.0"
+    "@ethersproject/abstract-provider" "^5.7.0"
+    "@ethersproject/address" "^5.7.0"
+    "@ethersproject/bignumber" "^5.7.0"
+    "@ethersproject/bytes" "^5.7.0"
+    "@ethersproject/constants" "^5.7.0"
+    "@ethersproject/contracts" "^5.7.0"
+    "@ethersproject/hash" "^5.7.0"
+    "@ethersproject/keccak256" "^5.7.0"
+    "@ethersproject/properties" "^5.7.0"
+    "@ethersproject/providers" "^5.7.0"
+    "@ethersproject/rlp" "^5.7.0"
+    "@ethersproject/transactions" "^5.7.0"
+    "@ethersproject/web" "^5.7.0"
+    bufio "^1.0.7"
+    chai "^4.3.4"
+
+"@eth-optimism/sdk@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/sdk/-/sdk-1.7.0.tgz#b81d45ddbbd0321f30694dead1be60a7ceed1768"
+  integrity sha512-mKfz0ODuqTo3NjzXSoNIE1BnBw/ZVb9p1Kg0AehxLIGPlgcvF1xWcHqCBANt0HUv9tRDwLB8j/sIqtlvFHyK/g==
+  dependencies:
+    "@eth-optimism/contracts" "0.5.38"
+    "@eth-optimism/contracts-bedrock" "0.10.0"
+    "@eth-optimism/core-utils" "0.11.0"
+    lodash "^4.17.21"
+    merkletreejs "^0.2.27"
+    rlp "^2.2.7"
+
 "@ethereumjs/block@^3.6.2":
   version "3.6.3"
   resolved "https://registry.yarnpkg.com/@ethereumjs/block/-/block-3.6.3.tgz#d96cbd7af38b92ebb3424223dbf773f5ccd27f84"
@@ -305,7 +359,7 @@
     "@ethersproject/properties" "^5.6.0"
     "@ethersproject/transactions" "^5.6.2"
 
-"@ethersproject/contracts@5.7.0":
+"@ethersproject/contracts@5.7.0", "@ethersproject/contracts@^5.7.0":
   version "5.7.0"
   resolved "https://registry.yarnpkg.com/@ethersproject/contracts/-/contracts-5.7.0.tgz#c305e775abd07e48aa590e1a877ed5c316f8bd1e"
   integrity sha512-5GJbzEU3X+d33CdfPhcyS+z8MzsTrBGk/sc+G+59+tPa9yFkl6HQ9D6L0QMgNTA9q8dT0XKxxkyp883XsQvbbg==
@@ -553,7 +607,7 @@
     bech32 "1.1.4"
     ws "7.4.6"
 
-"@ethersproject/providers@5.7.2", "@ethersproject/providers@^5.7.2":
+"@ethersproject/providers@5.7.2", "@ethersproject/providers@^5.7.0", "@ethersproject/providers@^5.7.2":
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/@ethersproject/providers/-/providers-5.7.2.tgz#f8b1a4f275d7ce58cf0a2eec222269a08beb18cb"
   integrity sha512-g34EWZ1WWAVgr4aptGlVBF8mhl3VWjv+8hoAnzStu8Ah22VHBsuGzP17eb6xDVRzw895G4W7vvx60lFFur/1Rg==
@@ -1229,6 +1283,11 @@
   dependencies:
     "@types/sinon-chai" "^3.2.3"
     "@types/web3" "1.0.19"
+
+"@openzeppelin/contracts-upgradeable@4.7.3":
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.7.3.tgz#f1d606e2827d409053f3e908ba4eb8adb1dd6995"
+  integrity sha512-+wuegAMaLcZnLCJIvrVUDzA9z/Wp93f0Dla/4jJvIhijRrPabjQbZe6fWiECLaJyfn5ci9fqf9vTw3xpQOad2A==
 
 "@openzeppelin/contracts-upgradeable@^4.8.0":
   version "4.8.0"
@@ -2456,6 +2515,11 @@ bufferutil@^4.0.1:
   dependencies:
     node-gyp-build "^4.3.0"
 
+bufio@^1.0.7:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/bufio/-/bufio-1.1.3.tgz#7f8e524fd719ced2caa563a09d50550f283f745f"
+  integrity sha512-W0ydG8t+ST+drUpEwl1N+dU9Ije06g8+43CLtvEIzfKo9nPFLXbKqDYE2XSg4w6RugsBcCj7pEU7jOpBC6BqrA==
+
 busboy@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/busboy/-/busboy-1.6.0.tgz#966ea36a9502e43cdb9146962523b92f531f6893"
@@ -2556,7 +2620,7 @@ chai@4.3.6:
     pathval "^1.1.1"
     type-detect "^4.0.5"
 
-chai@^4.3.7:
+chai@^4.3.4, chai@^4.3.7:
   version "4.3.7"
   resolved "https://registry.yarnpkg.com/chai/-/chai-4.3.7.tgz#ec63f6df01829088e8bf55fca839bcd464a8ec51"
   integrity sha512-HLnAzZ2iupm25PlN0xFreAlBA5zaBSv3og0DdeGA4Ar6h6rJ3A0rolRUKJhSF2V10GZKDgWF/VmAEsNWjCRB+A==
@@ -3691,7 +3755,7 @@ ethers@5.7.0:
     "@ethersproject/web" "5.7.0"
     "@ethersproject/wordlists" "5.7.0"
 
-ethers@5.7.2, ethers@^5.5.2, ethers@^5.5.3, ethers@^5.7.2:
+ethers@5.7.2, ethers@^5.5.2, ethers@^5.5.3, ethers@^5.7.0, ethers@^5.7.2:
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.7.2.tgz#3a7deeabbb8c030d4126b24f84e525466145872e"
   integrity sha512-wswUsmWo1aOK8rR7DIKiWSw9DbLWe6x98Jrn8wcTflTVvaXhAMaB5zGAXy0GYQEQp9iO1iSHWVyARQm11zUtyg==
@@ -4518,7 +4582,7 @@ hardhat-gas-reporter@1.0.9, hardhat-gas-reporter@^1.0.9:
     eth-gas-reporter "^0.2.25"
     sha1 "^1.1.1"
 
-hardhat@^2.12.3:
+hardhat@^2.12.3, hardhat@^2.9.6:
   version "2.12.3"
   resolved "https://registry.yarnpkg.com/hardhat/-/hardhat-2.12.3.tgz#1824c5d5e2bcc61601bee429053ccecb4dbc0adb"
   integrity sha512-qxOvRNgQnLqRFssn5f8VP5KN3caytShU0HNeKxmPVK1Ix/0xDVhIC7JOLxG69DjOihUfmxmjqspsHbZvFj6EhQ==
@@ -5546,6 +5610,17 @@ merkletreejs@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/merkletreejs/-/merkletreejs-0.3.0.tgz#886e4d709cdf8bfd317dfdf9531699c38f258af7"
   integrity sha512-kkv3AayjcsgglUOSMqfh2tNs6rMmd6/2kv9HtoVf7kIcUBsPCC8hJuuW5EIgprKmWMFXwLgj3TH/zO2sHIigGA==
+  dependencies:
+    bignumber.js "^9.0.1"
+    buffer-reverse "^1.0.1"
+    crypto-js "^3.1.9-1"
+    treeify "^1.1.0"
+    web3-utils "^1.3.4"
+
+merkletreejs@^0.2.27:
+  version "0.2.32"
+  resolved "https://registry.yarnpkg.com/merkletreejs/-/merkletreejs-0.2.32.tgz#cf1c0760e2904e4a1cc269108d6009459fd06223"
+  integrity sha512-TostQBiwYRIwSE5++jGmacu3ODcKAgqb0Y/pnIohXS7sWxh1gCkSptbmF1a43faehRDpcHf7J/kv0Ml2D/zblQ==
   dependencies:
     bignumber.js "^9.0.1"
     buffer-reverse "^1.0.1"
@@ -6729,7 +6804,7 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
-rlp@^2.2.3, rlp@^2.2.4:
+rlp@^2.2.3, rlp@^2.2.4, rlp@^2.2.7:
   version "2.2.7"
   resolved "https://registry.yarnpkg.com/rlp/-/rlp-2.2.7.tgz#33f31c4afac81124ac4b283e2bd4d9720b30beaf"
   integrity sha512-d5gdPmgQ0Z+AklL2NVXr/IoSjNZFfTVvQWzL/AM2AOcSzYP2xjlb0AC8YyCLc41MSNf6P6QVtjgPdmVtzb+4lQ==

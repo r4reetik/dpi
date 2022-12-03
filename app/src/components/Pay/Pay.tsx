@@ -1,14 +1,14 @@
 import React, { Dispatch, SetStateAction } from "react";
-import TokenCard, { TokenType } from "../Token/TokenCard";
-import {  UilHistory, UilQrcodeScan, UilArrowUpRight } from "@iconscout/react-unicons";
-import { Tokens } from "../../constants/Tokens";
+import TokenCard from "../Token/TokenCard";
+
+import { UilHistory, UilQrcodeScan, UilArrowUpRight } from "@iconscout/react-unicons";
+import { TokenType } from "../../constants/Tokens";
 import { usePayTC } from "../../contexts/usePaytc";
 import { PageType } from "../../pages";
 
-const tokens = [...Tokens[5], ...Tokens[80001]];
 
 const Pay = ({ next,setPage }: { next: () => void,setPage:Dispatch<SetStateAction<PageType>> }) => {
-  const { setSelectedToken } = usePayTC();
+  const { setSelectedToken,tokens } = usePayTC();
   const handleTokenClick = async (_token: TokenType) => {
     setSelectedToken(_token);
     next();
@@ -17,13 +17,13 @@ const Pay = ({ next,setPage }: { next: () => void,setPage:Dispatch<SetStateActio
   return (
     <div className='flex w-full flex-col gap-y-1'>
       <div className='flex mt-4 text-center justify-around items-center rounded-2xl md:min-w-[448px] py-8 text-white bg-black-800'>
-        <div onClick={()=>setPage("payReview")} className='flex flex-col justify-start items-center'>
+        <div onClick={()=>setPage("amountRecipient")} className='flex flex-col justify-start items-center'>
           <div  className='flex justify-center items-center font-semibold rounded-full w-16 h-16 bg-primary'>
             <UilArrowUpRight />
           </div>
           <div className='mt-1'>Send</div>
         </div>
-        <div onClick={()=>setPage("input")} className='flex flex-col justify-center items-center'>
+        <div onClick={()=>setPage("inputRecipient")} className='flex flex-col justify-center items-center'>
           <div className='flex justify-center items-center font-semibold rounded-full w-16 h-16 bg-primary'>
             <UilQrcodeScan />
           </div>
@@ -36,17 +36,17 @@ const Pay = ({ next,setPage }: { next: () => void,setPage:Dispatch<SetStateActio
           <div className='mt-1'>History</div>
         </div>
       </div>
-      <div className='flex flex-col mt-4 justify-between align-middle rounded-2xl items-center text-white bg-black-800'>
+      <div className='flex flex-col items-center justify-between mt-4 text-white align-middle rounded-2xl bg-black-800'>
         <div className='my-1 px-0.5 py-1 mr-auto ml-2 text-sm font-semibold tracking-wide capitalize text-gray-500'>
           Your Assets
         </div>
         <div className='w-full p-2'>
           <div className='flex flex-col gap-0.5 mb-2 justify-start'>
-            {tokens.map((token) => (
+            {Object.values(tokens).map((_token) => (
               <TokenCard
-                key={`${token.chain}-${token.symbol}`}
-                token={token}
-                onClick={() => handleTokenClick(token)}
+                key={`${_token.chain}-${_token.symbol}`}
+                token={_token}
+                onClick={() => handleTokenClick(_token)}
               />
             ))}
           </div>

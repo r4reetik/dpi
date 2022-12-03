@@ -1,9 +1,9 @@
 import React from 'react';
 import { usePayTC } from '../../contexts/usePaytc';
-import { TokenType } from '../Token/TokenCard';
 import ContentWrapper from '../wrappers/ContentWrapper';
 import TokenBalanceInput from './TokenBalanceInput';
 import { UilArrowLeft } from '@iconscout/react-unicons'
+import { TokenType } from '../../constants/Tokens';
 
 interface PayReviewProps {
     token: TokenType,

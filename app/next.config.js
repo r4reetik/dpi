@@ -4,6 +4,7 @@ const webpack = require("webpack");
 
 const nextConfig = {
   reactStrictMode: true,
+  // assetPrefix: "./",
   swcMinify: true,
   webpack(config, { buildId }) {
     config.module.rules.push({ test: /\.svg$/, use: ["@svgr/webpack"] });
@@ -15,6 +16,6 @@ const nextConfig = {
       "logos.covalenthq.com",
     ],
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

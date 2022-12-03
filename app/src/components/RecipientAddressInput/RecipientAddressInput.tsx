@@ -31,8 +31,9 @@ function RecipientAddressInput({ onBack }: { onBack: () => void }) {
       } else recipientSwAddress = mmData.swAddress;
     }
 
-    console.log("final ", recipientSwAddress);
+    setRecipient(text);
     setFullScreenLoading(false);
+    next();
   };
 
   return (

@@ -1,5 +1,8 @@
 import { useWeb3React } from "@web3-react/core";
 
+import { ethers } from "ethers";
+import { AbiCoder } from "ethers/lib/utils";
+
 import {
   createContext,
   Dispatch,
@@ -11,39 +14,49 @@ import {
   useState,
 } from "react";
 import { SmartWalletBaseUrl } from "../constants/APIs";
-import { ChainIdToNetwork } from "../constants/ChainIdNetwork";
+
+import { Tokens, TokenType } from "../constants/Tokens";
+import { MetaMask } from "../constants/WalletInfo";
 import { unstable_batchedUpdates } from "react-dom";
 import { SmartWallet } from "../pages";
-import { get } from "../utils/axios";
+import { get, post } from "../utils/axios";
+import { getAddressFromEns } from "../utils/ens";
 
 import { addNewUser, getAddressData } from "../utils/firebase";
+import { ChainIdToNetwork } from "../constants/ChainIdNetwork";
 
 export type Flow = "connectWallet" | "pay" | "payReview" | "input" | "history"
 
 interface PayTcContextType {
   signIn: (_mmAddress: string) => Promise<void>;
   isInitialized: boolean;
-  balances: { chainId: number; balance: string; symbol: string }[];
+  tokens: { [x: string]: TokenType };
   transactions : any;
   fullScreenLoading: boolean;
   recipient: string | null;
   setFullScreenLoading: Dispatch<SetStateAction<boolean>>;
+  submitTransfer: () => Promise<void>;
+
   setRecipient: Dispatch<SetStateAction<string | null>>;
-  setSelectedToken: Dispatch<SetStateAction<any>>;
+
+  selectedToken: TokenType | null;
+  setSelectedToken: Dispatch<SetStateAction<TokenType | null>>;
+  amount: string;
+  setAmount: Dispatch<SetStateAction<string>>;
 }
 
 const Context = createContext<PayTcContextType>({} as PayTcContextType);
 
 const PayTCProvider = ({ children }: any) => {
-  const { chainId, account } = useWeb3React();
+  const { chainId, account, activate } = useWeb3React();
   const [swAddress, setSwAddress] = useState<string | null>(null);
-  const [balances, setBalances] = useState<any>();
+  const [tokens, setTokens] = useState<{ [x: string]: TokenType }>(Tokens);
   const [transactions, setTransactions] = useState<any>();
   const [fullScreenLoading, setFullScreenLoading] = useState(false);
-  const [recipient, setRecipient] = useState<string | null>(null);
 
-  const [selectedToken, setSelectedToken] = useState();
-  const [flow, setFlow] = useState<Array<Flow>>(["pay"]);
+  const [recipient, setRecipient] = useState<string | null>(null);
+  const [selectedToken, setSelectedToken] = useState<TokenType | null>(null);
+  const [amount, setAmount] = useState<string>("");
 
   const isInitialized = !!swAddress;
   const fetchAndSetTransactions = useCallback(async () => {
@@ -78,32 +91,45 @@ const PayTCProvider = ({ children }: any) => {
         }
       }
     }
-    setBalances(_transactions);
+    setTransactions(_transactions);
   }, [swAddress]);
-  const fetchAndSetBalances = useCallback(async () => {
-    if (!swAddress) return;
-    const _balances = []; // SW - 0x1085d0db6c015D3Ec73652e6Bb2790fC9A5E0464 // 0xDd66499a43bE05730Ec97a2aB25c1B534B46e8c1
-    for (const _chainId of Object.keys(ChainIdToNetwork)) {
-      const data = await get(
-        `https://api.covalenthq.com/v1/${_chainId}/address/${swAddress}/balances_v2/?key=${process.env.NEXT_PUBLIC_COVALENT_API_KEY}`
-      );
+ 
+  const fetchAndSetBalances = useCallback(
+    async (_swAddress?: string) => {
+      const localSwAddress = _swAddress ?? swAddress;
+      if (!localSwAddress) return;
+      // const _balances = []; // SW - 0x1085d0db6c015D3Ec73652e6Bb2790fC9A5E0464 // 0xDd66499a43bE05730Ec97a2aB25c1B534B46e8c1
+      const _tokens = { ...Tokens };
+      // for (const _chainId of Object.keys(ChainIdToNetwork)) {
+      //   const data = await get(
+      //     `https://api.covalenthq.com/v1/${_chainId}/address/${localSwAddress}/balances_v2/?key=${process.env.NEXT_PUBLIC_COVALENT_API_KEY}`
+      //   );
 
-      if (data) {
-        // @ts-ignore
-        const { items } = data.data;
-        for (const _t of items) {
-          if (_t.balance !== "0") {
-            _balances.push({
-              symbol: _t.contract_ticker_symbol,
-              chainId: _chainId,
-              balance: _t.balance,
-            });
-          }
-        }
+      //   if (data) {
+      //     // @ts-ignore
+      //     const { items } = data.data;
+      //     for (const _t of items) {
+      //       if (_t.balance !== "0") {
+      //         const contractAddress = _t.contract_address.toUpperCase();
+      //         if (_tokens[contractAddress]) _tokens[contractAddress].balance = _t.balance;
+      //       }
+      //     }
+      //   }
+      // }
+
+      const { result }: any = await get(`${SmartWalletBaseUrl}/getBalanceOfV2`, {
+        params: { address: localSwAddress },
+      });
+
+      for (const _t of Object.keys(_tokens)) {
+        _tokens[_t].balance = result[_t];
       }
-    }
-    setBalances(_balances);
-  }, [swAddress]);
+
+      setTokens(_tokens);
+      return _tokens;
+    },
+    [swAddress]
+  );
 
   const getOrDeploySmartWallet = useCallback(
     async (address: string, chainId: number): Promise<SmartWallet> => {
@@ -126,6 +152,7 @@ const PayTCProvider = ({ children }: any) => {
         await addNewUser(_mmAddress, swa);
       }
 
+      await fetchAndSetBalances(swa);
       setSwAddress(swa);
       await fetchAndSetBalances();
       await fetchAndSetTransactions()
@@ -134,16 +161,81 @@ const PayTCProvider = ({ children }: any) => {
     [chainId, fetchAndSetBalances, fetchAndSetTransactions, getOrDeploySmartWallet]
   );
 
-  // useEffect(()=>{
-  //   (async () => {
-  //     await fetchAndSetTransactions();
-  //   })()
-  // },[fetchAndSetTransactions])
+  const submitTransfer = async () => {
+    if (!selectedToken) return;
+
+    let recipientSwAddress;
+    let docData;
+    if (recipient!.endsWith(".eth")) {
+      const mm = await getAddressFromEns(recipient!);
+      if (!mm) throw new Error("Invalid ENS");
+
+      const data = await getAddressData("mmAddress", mm);
+      if (!data) throw new Error(`MM Address ${mm} not found`);
+
+      recipientSwAddress = data.swAddress;
+      docData = data;
+    } else {
+      const mmData = await getAddressData("mmAddress", recipient!);
+      if (!mmData) {
+        const swData = await getAddressData("swAddress", recipient!);
+        if (!swData) throw new Error(`${recipient} invalid wallet address`);
+
+        recipientSwAddress = recipient;
+        docData = swData;
+      } else {
+        recipientSwAddress = mmData.swAddress;
+        docData = mmData;
+      }
+    }
+
+    const targetDomainId = !docData.defaultChainId
+      ? selectedToken.domainId
+      : docData.defaultChainId === 5
+      ? "1735353714"
+      : "9991";
+
+    const { address: tokenAddress } = selectedToken;
+    const res: any = await post(`${SmartWalletBaseUrl}/getTypedData`, {
+      domainID: targetDomainId,
+      address: swAddress,
+      chainID: chainId,
+      recipient: recipientSwAddress,
+      asset: tokenAddress,
+      delegate: swAddress,
+      amount,
+      slippage: "10",
+    });
+    const provider = new ethers.providers.Web3Provider((window as any).ethereum as any, "any");
+
+    const signature = await provider.getSigner()._signTypedData(res.domain, res.types, res.value);
+    const signatureEncoded = new AbiCoder().encode(["uint256", "bytes"], [chainId, signature]);
+    const rrr = await post(`${SmartWalletBaseUrl}/transactions`, {
+      chainID: chainId,
+      signature: signatureEncoded,
+      userOps: res.userOps,
+      address: swAddress, // my sw address?
+    });
+    console.log(rrr);
+    // TODO: show toast saying tx was a success
+  };
 
   useEffect(() => {
     if (!isInitialized && account) signIn(account);
     return () => { };
   }, [account, isInitialized, signIn]);
+
+  useEffect(() => {
+    activate(MetaMask);
+
+    return () => {};
+  }, [activate]);
+
+  useEffect(() => {
+    activate(MetaMask);
+
+    return () => {};
+  }, [activate]);
 
   return (
     <Context.Provider
@@ -151,12 +243,16 @@ const PayTCProvider = ({ children }: any) => {
         signIn,
         transactions,
         isInitialized,
-        balances,
+        tokens,
         fullScreenLoading,
         setFullScreenLoading,
+        selectedToken,
         setSelectedToken,
         recipient,
         setRecipient,
+        amount,
+        setAmount,
+        submitTransfer,
       }}>
       {children}
     </Context.Provider>

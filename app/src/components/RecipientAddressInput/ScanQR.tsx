@@ -1,19 +1,20 @@
 import React, { useState } from "react";
+// @ts-ignore
 import QrReader from "react-qr-scanner";
 
 const ScanQR = ({ resolve }: { resolve: (text: string) => void }) => {
   const [input, setInput] = useState();
 
-  const onScan = (r) => {
+  const onScan = (r: any) => {
     if (!r) return;
     setInput(r.text);
   };
 
   return (
     <div className='flex flex-col justify-between align-middle'>
-      <div className='flex w-full flex-col justify-between items-center mb-40 text-gray-50 z-10'>
+      <div className='z-10 flex flex-col items-center justify-between w-full mb-40 text-gray-50'>
         <QrReader delay={500} onScan={onScan} onError={() => console.error("QR failed to load")} />
-        <p className='text-gray-300 text-md mt-3'>Scan a QR Code</p>
+        <p className='mt-3 text-xs text-gray-300'>Scan a QR Code</p>
         {input && (
           <>
             <p className='mt-2'> {input} </p> <button onClick={() => resolve(input)}>submit</button>
