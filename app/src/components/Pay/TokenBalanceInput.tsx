@@ -5,14 +5,16 @@ import { toFixed } from "../../utils/misc";
 import { inputToFixed } from "../../utils/misc";
 import { LoadingIndicator } from "../icons/LoadingIndicator";
 import { TokenType } from "../Token/TokenCard";
+import BottomSheet from "../BottomSheets/BottomSheet";
 
 interface TokenBalanceInputProps {
-    token : TokenType
+  token: TokenType;
 }
 
-const TokenBalanceInput = ({token}:TokenBalanceInputProps) => {
+const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [input,setInput] = useState<number | null>();
+  const [input, setInput] = useState<number | null>();
+  const [showTokens, setShowTokens] = useState(false);
 
   const handleChange = (e: any) => {
     e.preventDefault();
@@ -42,7 +44,6 @@ const TokenBalanceInput = ({token}:TokenBalanceInputProps) => {
     return true;
   };
 
-
   return (
     <div className='flex flex-col md:min-h-[72px] bg-black-900 md:bg-black-800 rounded-xl'>
       <div className='flex justify-between gap-4 px-4 pt-3 pb-1 sm:items-center sm:justify-between sm:flex-row '>
@@ -59,21 +60,21 @@ const TokenBalanceInput = ({token}:TokenBalanceInputProps) => {
           <div>
             <div className='flex items-center font-bold'>
               <span className='tracking-wide md:text-lg'>{token.symbol}</span>
-                <button onClick={()=>{}}>
-                  <AngleDownCircle className='ml-2' />
-                </button>
+              <button
+                onClick={() => {
+                  setShowTokens(true);
+                }}>
+                <AngleDownCircle className='ml-2' />
+              </button>
             </div>
 
-            <p
-              className={`font-semibold flex justify-center text-grey-500 text-sm tracking-wide`}>
-              {`${"Balance"}: ${ ''
-}`}
+            <p className={`font-semibold flex justify-center text-grey-500 text-sm tracking-wide`}>
+              {`${"Balance"}: ${""}`}
             </p>
           </div>
         </div>
         <div className='sm:w-[216px] p-0 border-0 inline-flex flex-col relative mt-2 md:mt-0'>
-          <div
-            className={`py-2 relative inline-flex font-[inherit] "opacity-50"}`}>
+          <div className={`py-2 relative inline-flex font-[inherit] "opacity-50"}`}>
             <input
               type='number'
               inputMode='decimal'
@@ -88,7 +89,7 @@ const TokenBalanceInput = ({token}:TokenBalanceInputProps) => {
               min={0}
               placeholder={`Enter Amount here`}
             />
-              {/* <div>
+            {/* <div>
                 <LoadingIndicator />
               </div> */}
             <fieldset
@@ -102,7 +103,12 @@ const TokenBalanceInput = ({token}:TokenBalanceInputProps) => {
           {`~ $${fiatAmount.toFixed(2)}`}
         </span> */}
       {/* ) : ( */}
-        <div className='mb-2' />
+      <div className='mb-2' />
+      {showTokens && (
+        <BottomSheet title='Select tokens' open setOpen={setShowTokens}>
+          <div>Please place respective component when tokens are ready</div>
+        </BottomSheet>
+      )}
     </div>
   );
 };
