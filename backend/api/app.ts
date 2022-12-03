@@ -481,6 +481,26 @@ app.get("/getBalanceOf", async (req, res) => {
   res.status(200).send({ result: balances });
 });
 
+app.get("/getBalanceOfV2", async (req, res) => {
+  let balances: { [x: string]: string } = {};
+  const address = req.query.address as string;
+  let tokens = Object.keys(Tokens);
+
+  const promises = tokens.map(async (token) => {
+    const provider = getProvider(Tokens[token].chainId);
+    const contract = new ethers.Contract(Tokens[token].address, ERC20_ABI, provider);
+    const balance = await contract.balanceOf(address);
+    return balance.toString();
+  });
+
+  const balanceList = await Promise.all(promises);
+  for (let i = 0; i < tokens.length; i++) {
+    balances[tokens[i]] = balanceList[i];
+  }
+
+  res.status(200).send({ result: balances });
+});
+
 app.get("/addresses/:address", async (req, res) => {
   const signerAddress = req.params.address;
   const id = req.query.id ? req.query.id.toString() : "0";

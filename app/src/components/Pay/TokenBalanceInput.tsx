@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import AngleDownCircle from "../icons/AngleDownCircle";
 
@@ -6,45 +6,31 @@ import BottomSheet from "../BottomSheets/BottomSheet";
 import { TokenType } from "../../constants/Tokens";
 import { usePayTC } from "../../contexts/usePaytc";
 import TokenCard from "../Token/TokenCard";
+import BigNumber from "bignumber.js";
 
 interface TokenBalanceInputProps {
   token: TokenType;
 }
 
 const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
-  const { tokens, setSelectedToken } = usePayTC();
+  const { tokens, setSelectedToken, setAmount, selectedToken } = usePayTC();
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const [input, setInput] = useState<number | null>();
+  const inputChangeRef = useRef<any>(null);
+
+  const [input, setInput] = useState<string>("");
   const [showTokensBottomSheet, setShowTokensBottomSheet] = useState(false);
 
-  const handleChange = (e: any) => {
-    e.preventDefault();
-    const value: string = e.target.value;
-    if (value.length > 11) {
-      const pointIndex = value.indexOf(".");
-      if (pointIndex === -1 || (pointIndex >= 0 && value.substring(0, pointIndex).length > 11)) {
-        e.preventDefault();
-        return;
-      }
-    }
-  };
+  useEffect(() => {
+    inputChangeRef.current = setTimeout(() => {
+      setAmount(new BigNumber(input).shiftedBy(selectedToken!.decimals).toString());
+    }, 700);
 
-  const isValidNumber = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Allow only a digit or a dot/point
-    if (/[0-9]/.test(e.key) || e.key === ".") {
-      // Check for proper number or decimal
-      if (!/^\d*\.?\d*$/.test(input + e.key)) {
-        e.preventDefault();
-        return false;
-      }
-    } else {
-      e.preventDefault();
-      return false;
-    }
-
-    return true;
-  };
+    return () => {
+      clearTimeout(inputChangeRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [input]);
 
   return (
     <div className='flex flex-col md:min-h-[72px] bg-black-900 md:bg-black-800 rounded-xl'>
@@ -71,7 +57,9 @@ const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
             </div>
 
             <p className={`font-semibold flex self-start text-grey-500 text-sm tracking-wide`}>
-              {`${"Balance"}: ${""}`}
+              {`${"Balance"}: ${new BigNumber(selectedToken?.balance ?? 0)
+                .shiftedBy(-selectedToken!.decimals)
+                .toFixed(4)}`}
             </p>
           </div>
         </div>
@@ -80,6 +68,7 @@ const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
             <input
               type='number'
               inputMode='decimal'
+              value={input}
               ref={inputRef}
               className='peer text-left md:text-right w-full border-none outline-none select-none font-[inherit] text-current bg-inherit font-bold hide-arrows'
               onWheel={(e) => {
@@ -87,7 +76,7 @@ const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
                 e.stopPropagation();
               }}
               step='any'
-              onChange={handleChange}
+              onChange={(e) => setInput(e.target.value)}
               min={0}
               placeholder={`Enter Amount here`}
             />

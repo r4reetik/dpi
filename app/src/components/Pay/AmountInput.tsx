@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import React from "react";
 import { usePayTC } from "../../contexts/usePaytc";
 
@@ -5,7 +6,10 @@ import ContentWrapper from "../wrappers/ContentWrapper";
 import TokenBalanceInput from "./TokenBalanceInput";
 
 const AmountInput = ({ next }: { next: () => void }) => {
-  const { recipient, selectedToken } = usePayTC();
+  const { recipient, selectedToken, amount } = usePayTC();
+
+  const disabled = new BigNumber(selectedToken?.balance ?? 0).isLessThan(amount);
+
   return (
     <div className='flex flex-col items-stretch justify-around gap-8 mt-10 h-[90%]'>
       <ContentWrapper label={"You Send"}>
@@ -24,7 +28,13 @@ const AmountInput = ({ next }: { next: () => void }) => {
       </ContentWrapper>
       <div className='grow' />
 
-      <button className='text-xl bg-primary p-4 rounded-3xl max-h-[450px]'>Send</button>
+      <button
+        disabled={disabled}
+        className={`text-xl ${
+          disabled ? "bg-gray-400 text-black" : "bg-primary text-white"
+        } p-4 rounded-3xl max-h-[450px] `}>
+        Send
+      </button>
     </div>
   );
 };

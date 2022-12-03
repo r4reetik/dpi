@@ -14,11 +14,12 @@ import {
   useState,
 } from "react";
 import { SmartWalletBaseUrl } from "../constants/APIs";
-import { ChainIdToNetwork } from "../constants/ChainIdNetwork";
+
 import { Tokens, TokenType } from "../constants/Tokens";
 import { MetaMask } from "../constants/WalletInfo";
 import { SmartWallet } from "../pages";
 import { get, post } from "../utils/axios";
+import { getAddressFromEns } from "../utils/ens";
 
 import { addNewUser, getAddressData } from "../utils/firebase";
 
@@ -32,8 +33,10 @@ interface PayTcContextType {
 
   setRecipient: Dispatch<SetStateAction<string | null>>;
 
-  selectedToken: any;
-  setSelectedToken: Dispatch<SetStateAction<any>>;
+  selectedToken: TokenType | null;
+  setSelectedToken: Dispatch<SetStateAction<TokenType | null>>;
+  amount: string;
+  setAmount: Dispatch<SetStateAction<string>>;
 }
 
 const Context = createContext<PayTcContextType>({} as PayTcContextType);
@@ -43,9 +46,10 @@ const PayTCProvider = ({ children }: any) => {
   const [swAddress, setSwAddress] = useState<string | null>(null);
   const [tokens, setTokens] = useState<{ [x: string]: TokenType }>(Tokens);
   const [fullScreenLoading, setFullScreenLoading] = useState(false);
-  const [recipient, setRecipient] = useState<string | null>(null);
 
+  const [recipient, setRecipient] = useState<string | null>(null);
   const [selectedToken, setSelectedToken] = useState<TokenType | null>(null);
+  const [amount, setAmount] = useState<string>("");
 
   const isInitialized = !!swAddress;
 
@@ -55,21 +59,29 @@ const PayTCProvider = ({ children }: any) => {
       if (!localSwAddress) return;
       // const _balances = []; // SW - 0x1085d0db6c015D3Ec73652e6Bb2790fC9A5E0464 // 0xDd66499a43bE05730Ec97a2aB25c1B534B46e8c1
       const _tokens = { ...Tokens };
-      for (const _chainId of Object.keys(ChainIdToNetwork)) {
-        const data = await get(
-          `https://api.covalenthq.com/v1/${_chainId}/address/${localSwAddress}/balances_v2/?key=${process.env.NEXT_PUBLIC_COVALENT_API_KEY}`
-        );
+      // for (const _chainId of Object.keys(ChainIdToNetwork)) {
+      //   const data = await get(
+      //     `https://api.covalenthq.com/v1/${_chainId}/address/${localSwAddress}/balances_v2/?key=${process.env.NEXT_PUBLIC_COVALENT_API_KEY}`
+      //   );
 
-        if (data) {
-          // @ts-ignore
-          const { items } = data.data;
-          for (const _t of items) {
-            if (_t.balance !== "0") {
-              const contractAddress = _t.contract_address.toUpperCase();
-              if (_tokens[contractAddress]) _tokens[contractAddress].balance = _t.balance;
-            }
-          }
-        }
+      //   if (data) {
+      //     // @ts-ignore
+      //     const { items } = data.data;
+      //     for (const _t of items) {
+      //       if (_t.balance !== "0") {
+      //         const contractAddress = _t.contract_address.toUpperCase();
+      //         if (_tokens[contractAddress]) _tokens[contractAddress].balance = _t.balance;
+      //       }
+      //     }
+      //   }
+      // }
+
+      const { result }: any = await get(`${SmartWalletBaseUrl}/getBalanceOfV2`, {
+        params: { address: localSwAddress },
+      });
+
+      for (const _t of Object.keys(_tokens)) {
+        _tokens[_t].balance = result[_t];
       }
 
       setTokens(_tokens);
@@ -106,15 +118,37 @@ const PayTCProvider = ({ children }: any) => {
     [chainId, fetchAndSetBalances, getOrDeploySmartWallet]
   );
 
-  const submitTransfer = async (recipientSwAddress: string, amount: string) => {
+  const submitTransfer = async () => {
     if (!selectedToken) return;
 
-    const recipientData = await getAddressData("swAddress", recipientSwAddress);
-    if (!recipientData) return;
+    let recipientSwAddress;
+    let docData;
+    if (recipient!.endsWith(".eth")) {
+      const mm = await getAddressFromEns(recipient!);
+      if (!mm) throw new Error("Invalid ENS");
 
-    const targetDomainId = !recipientData.defaultChainId
+      const data = await getAddressData("mmAddress", mm);
+      if (!data) throw new Error(`MM Address ${mm} not found`);
+
+      recipientSwAddress = data.swAddress;
+      docData = data;
+    } else {
+      const mmData = await getAddressData("mmAddress", recipient!);
+      if (!mmData) {
+        const swData = await getAddressData("swAddress", recipient!);
+        if (!swData) throw new Error(`${recipient} invalid wallet address`);
+
+        recipientSwAddress = recipient;
+        docData = swData;
+      } else {
+        recipientSwAddress = mmData.swAddress;
+        docData = mmData;
+      }
+    }
+
+    const targetDomainId = !docData.defaultChainId
       ? selectedToken.domainId
-      : recipientData.defaultChainId === 5
+      : docData.defaultChainId === 5
       ? "1735353714"
       : "9991";
 
@@ -166,6 +200,8 @@ const PayTCProvider = ({ children }: any) => {
         setSelectedToken,
         recipient,
         setRecipient,
+        amount,
+        setAmount,
       }}>
       {children}
     </Context.Provider>
