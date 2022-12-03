@@ -9,7 +9,7 @@ interface PayReviewProps {
 }
 
 const PayReview = ({ token }: PayReviewProps) => {
-    const { ensOrAddress } = usePayTC();
+    const { recipient } = usePayTC();
     return (
         <div className='flex flex-col justify-around gap-10 mt-10'>
             <ContentWrapper label={"You Send"}>
@@ -21,7 +21,7 @@ const PayReview = ({ token }: PayReviewProps) => {
                 <div className='flex flex-col gap-1'>
                     <div className='flex flex-col md:min-h-[72px] bg-black-900 md:bg-black-800 rounded-xl'>
                         <div className='flex justify-between gap-4 px-2 py-4 sm:items-center sm:justify-between sm:flex-row '>
-                            Recipient : {ensOrAddress}
+                            Recipient : {recipient}
                         </div>
                     </div>
                 </div>
