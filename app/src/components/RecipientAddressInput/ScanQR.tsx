@@ -11,7 +11,7 @@ const ScanQR = ({ resolve }: { resolve: (text: string) => void }) => {
 
   return (
     <div className='flex flex-col justify-between align-middle'>
-      <div className='flex w-full justify-between items-center mb-40 text-gray-50 z-10'>
+      <div className='flex w-full flex-col justify-between items-center mb-40 text-gray-50 z-10'>
         <QrReader delay={500} onScan={onScan} onError={() => console.error("QR failed to load")} />
         <p className='text-gray-300 text-xs mt-3'>Scan a QR Code</p>
         {input && (

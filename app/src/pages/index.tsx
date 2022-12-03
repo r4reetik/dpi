@@ -13,7 +13,7 @@ export interface SmartWallet {
 }
 
 export default function Home() {
-  const [page, setPage] = useState<PageType>("payReview");
+  const [page, setPage] = useState<PageType>("connectWallet");
 
   return (
     <div>
