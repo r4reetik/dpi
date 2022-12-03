@@ -12,7 +12,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <Web3ReactProvider getLibrary={(p) => new Web3Provider(p)}>
       <PayTCProvider>
         <Layout>
-          <Component {...pageProps} />
+        <Component {...pageProps} />
         </Layout>
       </PayTCProvider>
     </Web3ReactProvider>
