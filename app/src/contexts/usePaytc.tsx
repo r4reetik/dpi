@@ -1,5 +1,5 @@
 import { useWeb3React } from "@web3-react/core";
-import { getDefaultProvider } from "ethers";
+
 import {
   createContext,
   Dispatch,
