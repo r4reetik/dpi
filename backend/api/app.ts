@@ -13,8 +13,9 @@ import { AbiCoder } from "@ethersproject/abi";
 import { ERC20__factory } from "@connext/nxtp-contracts";
 
 config();
-const CONNEXT = "0xb35937ce4fFB5f72E90eAD83c10D33097a4F18D2";
-const connextContract = IConnext__factory.connect(CONNEXT, ethers.provider);
+const CONNEXT_Goerli = "0xb35937ce4fFB5f72E90eAD83c10D33097a4F18D2";
+const CONNEXT_Polygon = "0xa2F2ed226d4569C8eC09c175DDEeF4d41Bab4627";
+
 const app = express();
 const port = process.env.PORT ? process.env.PORT : 4000;
 app.use(express.json());
@@ -24,6 +25,8 @@ const providers = new Map<number, Ethers.providers.Provider>([
   [5, new Ethers.providers.JsonRpcProvider(process.env.ETHEREUM_GOERLI_URL!)],
   [80001, new Ethers.providers.JsonRpcProvider(process.env.POLYGON_TESTNET_URL!)],
 ]);
+
+const getConnextAddress = (chainId: number) => (chainId === 5 ? CONNEXT_Goerli : CONNEXT_Polygon);
 
 const FACTORY_ABI = [
   "function createWallet(address _owner) external returns (address)",
@@ -302,7 +305,7 @@ app.get("/addresses/:address", async (req, res) => {
 
 app.post("/getTypedData", async (req, res) => {
   const { domainID, address, chainID, recipient, asset, delegate, amount, slippage } = req.body;
-
+  const connextContract = IConnext__factory.connect(getConnextAddress(chainID), ethers.provider);
   const metaData = await connextContract.populateTransaction.xcall(
     domainID,
     recipient,
@@ -318,7 +321,7 @@ app.post("/getTypedData", async (req, res) => {
     "0x7ea6eA49B0b0Ae9c5db7907d139D9Cd3439862a1",
     ethers.provider.getSigner()
   );
-  const approveTx = await token.populateTransaction.approve(CONNEXT, amount);
+  const approveTx = await token.populateTransaction.approve(CONNEXT_Goerli, amount);
   const userOp: UserOp[] = [
     {
       to: approveTx.to!,
@@ -333,6 +336,7 @@ app.post("/getTypedData", async (req, res) => {
     },
   ];
   const metaTx = getMetaTx(userOp, address, +(await wallet.nonce()), chainID, chainID);
+  res.status(200).json({ ...metaTx });
 });
 
 app.get("/relayer", async (req, res) => {
@@ -366,14 +370,6 @@ app.post("/transactions/:address", async (req, res) => {
   const walletTx = await wallet.wallet!.exec(tx.userOps, tx.signature);
   const reciept = await walletTx.wait(1);
   res.status(201).send({ txHash: reciept.transactionHash });
-});
-
-app.post("/createWallet", async (req, res) => {
-  const chainid = parseInt(req.query.chainId!.toString());
-  const id = req.body.id ? req.body.id.toString() : "0";
-  const addr = req.body.address;
-  const wallet = await getSmartWallet(addr, id, chainid, true);
-  res.status(201).send({ address: wallet.address });
 });
 
 app.listen(port, async () => {
