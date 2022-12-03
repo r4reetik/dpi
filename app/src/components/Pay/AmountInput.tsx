@@ -5,8 +5,8 @@ import { usePayTC } from "../../contexts/usePaytc";
 import ContentWrapper from "../wrappers/ContentWrapper";
 import TokenBalanceInput from "./TokenBalanceInput";
 
-const AmountInput = ({ next }: { next: () => void }) => {
-  const { recipient, selectedToken, amount } = usePayTC();
+const AmountInput = ({ reset }: { reset: () => void }) => {
+  const { recipient, selectedToken, amount, setFullScreenLoading, submitTransfer } = usePayTC();
 
   const disabled = new BigNumber(selectedToken?.balance ?? 0).isLessThan(amount);
 
@@ -30,6 +30,12 @@ const AmountInput = ({ next }: { next: () => void }) => {
 
       <button
         disabled={disabled}
+        onClick={async () => {
+          setFullScreenLoading(true);
+          await submitTransfer();
+          reset();
+          setFullScreenLoading(false);
+        }}
         className={`text-xl ${
           disabled ? "bg-gray-400 text-black" : "bg-primary text-white"
         } p-4 rounded-3xl max-h-[450px] `}>

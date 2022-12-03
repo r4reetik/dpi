@@ -30,6 +30,7 @@ interface PayTcContextType {
   fullScreenLoading: boolean;
   recipient: string | null;
   setFullScreenLoading: Dispatch<SetStateAction<boolean>>;
+  submitTransfer: () => Promise<void>;
 
   setRecipient: Dispatch<SetStateAction<string | null>>;
 
@@ -202,6 +203,7 @@ const PayTCProvider = ({ children }: any) => {
         setRecipient,
         amount,
         setAmount,
+        submitTransfer,
       }}>
       {children}
     </Context.Provider>
