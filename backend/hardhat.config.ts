@@ -4,7 +4,9 @@
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-ethers";
 import "@typechain/hardhat";
+import "xdeployer";
 import "hardhat-deploy";
+
 import "hardhat-gas-reporter";
 import "@openzeppelin/hardhat-upgrades";
 import "solidity-coverage";
@@ -19,7 +21,7 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.8.9",
+        version: "0.8.17",
       },
     ],
     settings: {
@@ -28,6 +30,15 @@ const config: HardhatUserConfig = {
         runs: 200,
       },
     },
+  },
+  xdeploy: {
+    contract: "ECDSAWalletFactory",
+    constructorArgsPath: "./deployArgs.ts",
+    salt: "YOUR_SALT_MESSAGE_nest",
+    signer: process.env.PK1!,
+    rpcUrls: [process.env.ETHEREUM_GOERLI_URL, "https://rpc-mumbai.maticvigil.com/"],
+    gasLimit: 6000000,
+    networks: ["goerli", "polygon"],
   },
   networks: {
     polygon: {
