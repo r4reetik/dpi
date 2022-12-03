@@ -1,13 +1,13 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import TokenCard, { TokenType } from "../Token/TokenCard";
 import {  UilHistory, UilQrcodeScan, UilArrowUpRight } from "@iconscout/react-unicons";
 import { Tokens } from "../../constants/Tokens";
 import { usePayTC } from "../../contexts/usePaytc";
-import next from "next";
+import { PageType } from "../../pages";
 
 const tokens = [...Tokens[5], ...Tokens[80001]];
 
-const Pay = ({ next }: { next: () => void }) => {
+const Pay = ({ next,setPage }: { next: () => void,setPage:Dispatch<SetStateAction<PageType>> }) => {
   const { setSelectedToken } = usePayTC();
   const handleTokenClick = async (_token: TokenType) => {
     setSelectedToken(_token);
@@ -15,23 +15,23 @@ const Pay = ({ next }: { next: () => void }) => {
   };
 
   return (
-    <div className='flex flex-col gap-y-1'>
+    <div className='flex w-full flex-col gap-y-1'>
       <div className='flex mt-4 text-center justify-around items-center rounded-2xl md:min-w-[448px] py-8 text-white bg-black-800'>
-        <div className='flex flex-col justify-start items-center'>
-          <div className='flex justify-center items-center font-semibold rounded-full w-16 h-16 bg-primary'>
+        <div onClick={()=>setPage("payReview")} className='flex flex-col justify-start items-center'>
+          <div  className='flex justify-center items-center font-semibold rounded-full w-16 h-16 bg-primary'>
             <UilArrowUpRight />
           </div>
           <div className='mt-1'>Send</div>
         </div>
-        <div className='flex flex-col justify-center items-center'>
+        <div onClick={()=>setPage("input")} className='flex flex-col justify-center items-center'>
           <div className='flex justify-center items-center font-semibold rounded-full w-16 h-16 bg-primary'>
             <UilQrcodeScan />
           </div>
           <div className='mt-1'>Scan & Pay</div>
         </div>
-        <div className='flex flex-col justify-start items-center'>
+        <div onClick={()=>setPage("history")} className='flex flex-col justify-start items-center'>
           <div className='flex justify-center items-center font-semibold rounded-full w-16 h-16 bg-primary'>
-            < UilHistory />
+            <UilHistory />
           </div>
           <div className='mt-1'>History</div>
         </div>

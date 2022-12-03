@@ -12,6 +12,7 @@ const nextConfig = {
   images: {
     domains: [
       "static.debank.com",
+      "logos.covalenthq.com",
     ],
   },
 }

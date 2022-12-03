@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { UilUserCircle } from "@iconscout/react-unicons";
 import { getEnsOrAddress } from "../utils/ens";
 import Image from "next/image";
-import Logo from "public/images/logo.png";
+// import Logo from "public/svgs/white-logo-without-slogan.svg";
+import Logo from "public/images/white-without-slogan.png"
 import { useWeb3React } from "@web3-react/core";
 
 const NavigationBar = () => {
@@ -22,11 +23,9 @@ const NavigationBar = () => {
   return (
     <nav className='w-full'>
       <div className='relative grid items-center grid-cols-2 lg:grid-cols-[0.5fr_1fr_0.5fr] lg:px-12'>
-        <div className='flex justify-center align-middle py-4 xs:px-0 xs:py-6'>
-            <Image src={Logo} alt="logo" className='w-8 h-8' />
-            <span className="text-3xl italic  text-primary font-extrabold">
-               &nbsp;DPI
-            </span>
+        <div className='py-4 xs:px-0 xs:py-6'>
+            <Image src={Logo} alt="logo" width={64} height={32} />
+            {/* <Logo className="w-8 h-8"/> */}
         </div>
         <div className='flex items-center justify-center'>
           <div className='relative inline-block text-left '>

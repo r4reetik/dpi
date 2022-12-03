@@ -1,18 +1,31 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import AngleDownCircle from "../icons/AngleDownCircle";
 import { toFixed } from "../../utils/misc";
 import { inputToFixed } from "../../utils/misc";
 import { LoadingIndicator } from "../icons/LoadingIndicator";
-import { TokenType } from "../Token/TokenCard";
+import TokenCard, { TokenType } from "../Token/TokenCard";
+import BottomSheet from "../BottomSheets/BottomSheet";
+import { Tokens } from "../../constants/Tokens";
+import { usePayTC } from "../../contexts/usePaytc";
+import { PageType } from "../../pages";
+
+const tokens = [...Tokens[5], ...Tokens[80001]];
 
 interface TokenBalanceInputProps {
-    token : TokenType
+  token: TokenType,
+  next: () => void
 }
 
-const TokenBalanceInput = ({token}:TokenBalanceInputProps) => {
+const TokenBalanceInput = ({ token,next }: TokenBalanceInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [input,setInput] = useState<number | null>();
+  const [input, setInput] = useState<number | null>();
+  const [showTokens, setShowTokens] = useState<boolean>(false);
+  const { setSelectedToken } = usePayTC();
+  const handleTokenClick = async (_token: TokenType) => {
+    setSelectedToken(_token);
+    next();
+  };
 
   const handleChange = (e: any) => {
     e.preventDefault();
@@ -42,6 +55,10 @@ const TokenBalanceInput = ({token}:TokenBalanceInputProps) => {
     return true;
   };
 
+  const handleArrowClick = () => {
+
+  }
+
 
   return (
     <div className='flex flex-col md:min-h-[72px] bg-black-900 md:bg-black-800 rounded-xl'>
@@ -59,15 +76,15 @@ const TokenBalanceInput = ({token}:TokenBalanceInputProps) => {
           <div>
             <div className='flex items-center font-bold'>
               <span className='tracking-wide md:text-lg'>{token.symbol}</span>
-                <button onClick={()=>{}}>
-                  <AngleDownCircle className='ml-2' />
-                </button>
+              <button onClick={() => setShowTokens(true)}>
+                <AngleDownCircle className='ml-2' />
+              </button>
             </div>
 
             <p
               className={`font-semibold flex justify-center text-grey-500 text-sm tracking-wide`}>
-              {`${"Balance"}: ${ ''
-}`}
+              {`${"Balance"}: ${''
+                }`}
             </p>
           </div>
         </div>
@@ -78,7 +95,7 @@ const TokenBalanceInput = ({token}:TokenBalanceInputProps) => {
               type='number'
               inputMode='decimal'
               ref={inputRef}
-              className='peer text-left md:text-right w-full border-none outline-none select-none font-[inherit] text-current bg-inherit font-bold hide-arrows'
+              className='peer text-left md:text-right w-full border-none outline-none select-none font-[inherit] text-sm bg-inherit font-bold hide-arrows'
               onWheel={(e) => {
                 e.currentTarget.blur();
                 e.stopPropagation();
@@ -88,7 +105,7 @@ const TokenBalanceInput = ({token}:TokenBalanceInputProps) => {
               min={0}
               placeholder={`Enter Amount here`}
             />
-              {/* <div>
+            {/* <div>
                 <LoadingIndicator />
               </div> */}
             <fieldset
@@ -102,7 +119,26 @@ const TokenBalanceInput = ({token}:TokenBalanceInputProps) => {
           {`~ $${fiatAmount.toFixed(2)}`}
         </span> */}
       {/* ) : ( */}
-        <div className='mb-2' />
+      <div className='mb-2' />
+
+      <BottomSheet open={showTokens} setOpen={setShowTokens}>
+      <div className='flex flex-col mt-4 justify-between align-middle rounded-2xl items-center text-white bg-black-800'>
+        <div className='my-1 px-0.5 py-1 mr-auto ml-2 text-sm font-semibold tracking-wide capitalize text-gray-500'>
+          Your Assets
+        </div>
+        <div className='w-full p-2'>
+          <div className='flex flex-col gap-0.5 mb-2 justify-start'>
+            {tokens.map((token) => (
+              <TokenCard
+                key={`${token.chain}-${token.symbol}`}
+                token={token}
+                onClick={() => handleTokenClick(token)}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+      </BottomSheet>
     </div>
   );
 };
