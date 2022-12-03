@@ -13,8 +13,10 @@ export default function Home() {
     return () => {};
   }, []);
 
-  return <div>
-    {page === "connectWallet" && <ConnectWallet />}
-    {page === "pay" && <Pay/>}
-    </div>;
+  return (
+    <div>
+      {page === "connectWallet" && <ConnectWallet next={() => setPage("pay")} />}
+      {page === "pay" && <Pay />}
+    </div>
+  );
 }
