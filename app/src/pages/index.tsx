@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import ConnectWallet from "../components/ConnectWallet/ConnectWallet";
+import Pay from "../components/Pay/Pay";
 
 type PageType = "connectWallet" | "pay" | "payReview";
 
 export default function Home() {
-  const [page, setPage] = useState<PageType>("connectWallet");
+  const [page, setPage] = useState<PageType>("pay");
 
   useEffect(() => {
     // addNewUser("mm", "sw", null);
@@ -12,5 +13,8 @@ export default function Home() {
     return () => {};
   }, []);
 
-  return <div>{page === "connectWallet" && <ConnectWallet />}</div>;
+  return <div>
+    {page === "connectWallet" && <ConnectWallet />}
+    {page === "pay" && <Pay/>}
+    </div>;
 }

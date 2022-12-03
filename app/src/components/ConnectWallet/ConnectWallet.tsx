@@ -6,9 +6,8 @@ function ConnectWallet() {
   const { activate } = useWeb3React();
 
   return (
-    <div className={""}>
-      <h1 className='text-3xl font-bold underline'>Hello world!</h1>
-      <button onClick={() => activate(MetaMask)}>connect wallet</button>
+    <div className="mt-40">
+      <button className="text-xl bg-primary p-4 rounded-lg flex flex-col gap-1 overflow-y-auto max-h-[450px]" onClick={() => activate(MetaMask)}>Connect Wallet</button>
     </div>
   );
 }

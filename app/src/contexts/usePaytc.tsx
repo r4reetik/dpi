@@ -13,7 +13,11 @@ import {
 import { getEnsNameFromAddress } from "../utils/ens";
 import { addNewUser, db, getAddressData } from "../utils/firebase";
 
-const Context = createContext({});
+type PayTCAccountContextType = {
+  mmAddress: string | null;
+};
+
+const Context = createContext<PayTCAccountContextType>({} as PayTCAccountContextType);
 
 const PayTCProvider = ({ children }: any) => {
   const { chainId } = useWeb3React();
@@ -43,7 +47,9 @@ const PayTCProvider = ({ children }: any) => {
     setMmAddress(_mmAddress);
   };
 
-  return <Context.Provider value={{}}>{children}</Context.Provider>;
+  return <Context.Provider value={{
+    mmAddress
+  }}>{children}</Context.Provider>;
 };
 
 const usePayTC = () => {
