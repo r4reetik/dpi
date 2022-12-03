@@ -172,12 +172,15 @@ async function getSmartWallet(
   let wallet: SmartWallet = {
     address: await factory.walletAddress(addr, nonce),
   };
+
   const code = await getProvider(chainID)!.getCode(wallet.address);
   if (code === "0x") {
     if (!deploy) {
       return wallet;
     }
     const tx = await factory.createWallet(addr);
+    console.log(tx.hash);
+
     await tx.wait(1);
   }
   wallet.wallet = getWallet(wallet.address, chainID);
