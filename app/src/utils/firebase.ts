@@ -36,7 +36,7 @@ export const addNewUser = async (mmAddress: string, swAddress: string, ens?: str
     swAddress,
     ens: ens ?? null,
     createdAt: Math.floor(Date.now() / 1000),
-    defaultChain: null,
+    defaultChainId: null,
     defaultAsset: null,
   });
 };

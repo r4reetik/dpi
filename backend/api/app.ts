@@ -7,7 +7,7 @@ import { ECDSAWalletFactory, IWallet } from "../typechain-types";
 config();
 
 const app = express();
-const port = process.env.PORT ? process.env.PORT : 3000;
+const port = process.env.PORT ? process.env.PORT : 4000;
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
@@ -172,12 +172,15 @@ async function getSmartWallet(
   let wallet: SmartWallet = {
     address: await factory.walletAddress(addr, nonce),
   };
+
   const code = await getProvider(chainID)!.getCode(wallet.address);
   if (code === "0x") {
     if (!deploy) {
       return wallet;
     }
     const tx = await factory.createWallet(addr);
+    console.log(tx.hash);
+
     await tx.wait(1);
   }
   wallet.wallet = getWallet(wallet.address, chainID);

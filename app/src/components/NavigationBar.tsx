@@ -5,12 +5,8 @@ import { getEnsOrAddress } from "../utils/ens";
 import Image from "next/image";
 import Logo from "public/images/logo.png"
 
+
 const NavigationBar = () => {
-  // const {mmAddress} = usePayTC();
-  // const [displayName,setDisplayName] = useState<string>();
-  // useEffect(()=>{
-  //     getENSOrAddress(mmAddress).then((res)=>{setDisplayName(res)})
-  // })
   return (
     <nav className='w-full'>
       <div className='relative grid items-center grid-cols-2 lg:grid-cols-[0.5fr_1fr_0.5fr] lg:px-12'>

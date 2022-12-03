@@ -1,18 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ConnectWallet from "../components/ConnectWallet/ConnectWallet";
 import Pay from "../components/Pay/Pay";
 import ScanQR from "../components/QR/ScanQR"
 
 type PageType = "connectWallet" | "pay" | "payReview" | "scan";
 
+export interface SmartWallet {
+  address: string;
+  nonces: any;
+}
+
 export default function Home() {
-  const [page, setPage] = useState<PageType>("pay");
-
-  useEffect(() => {
-    // addNewUser("mm", "sw", null);
-
-    return () => {};
-  }, []);
+  const [page, setPage] = useState<PageType>("connectWallet");
 
   return (
     <div>
