@@ -1,11 +1,9 @@
 import React, { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import AngleDownCircle from "../icons/AngleDownCircle";
-import { toFixed } from "../../utils/misc";
-import { inputToFixed } from "../../utils/misc";
-import { LoadingIndicator } from "../icons/LoadingIndicator";
-import { TokenType } from "../Token/TokenCard";
+
 import BottomSheet from "../BottomSheets/BottomSheet";
+import { TokenType } from "../../constants/Tokens";
 
 interface TokenBalanceInputProps {
   token: TokenType;
@@ -50,7 +48,7 @@ const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
         <div className='flex items-center'>
           <div className='w-10 h-10 mr-4 pointer-events-none select-none'>
             <Image
-              src={token.logoURI}
+              src={token.image}
               alt={`${token.symbol} logo`}
               width={40}
               height={40}

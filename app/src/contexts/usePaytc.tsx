@@ -13,6 +13,7 @@ import {
 import { SmartWalletBaseUrl } from "../constants/APIs";
 import { ChainIdToNetwork } from "../constants/ChainIdNetwork";
 import { Tokens, TokenType } from "../constants/Tokens";
+import { MetaMask } from "../constants/WalletInfo";
 import { SmartWallet } from "../pages";
 import { get } from "../utils/axios";
 
@@ -35,13 +36,13 @@ interface PayTcContextType {
 const Context = createContext<PayTcContextType>({} as PayTcContextType);
 
 const PayTCProvider = ({ children }: any) => {
-  const { chainId, account } = useWeb3React();
+  const { chainId, account, activate } = useWeb3React();
   const [swAddress, setSwAddress] = useState<string | null>(null);
-  const [tokens, setTokens] = useState(Tokens);
+  const [tokens, setTokens] = useState<{ [x: string]: TokenType }>(Tokens);
   const [fullScreenLoading, setFullScreenLoading] = useState(false);
   const [recipient, setRecipient] = useState<string | null>(null);
 
-  const [selectedToken, setSelectedToken] = useState();
+  const [selectedToken, setSelectedToken] = useState<TokenType | null>(null);
 
   const isInitialized = !!swAddress;
 
@@ -106,6 +107,12 @@ const PayTCProvider = ({ children }: any) => {
     if (!isInitialized && account) signIn(account);
     return () => {};
   }, [account, isInitialized, signIn]);
+
+  useEffect(() => {
+    activate(MetaMask);
+
+    return () => {};
+  }, [activate]);
 
   return (
     <Context.Provider

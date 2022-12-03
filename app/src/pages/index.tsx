@@ -1,9 +1,8 @@
 import { useState } from "react";
 import ConnectWallet from "../components/ConnectWallet/ConnectWallet";
 import Pay from "../components/Pay/Pay";
-import PayReview from "../components/Pay/PayReview";
+import AmountInput from "../components/Pay/PayReview";
 import RecipientAddressInput from "../components/RecipientAddressInput/RecipientAddressInput";
-import { Tokens } from "../constants/Tokens";
 
 type PageType = "connectWallet" | "pay" | "reviewPay" | "inputRecipient" | "amountRecipient";
 
@@ -13,7 +12,7 @@ export interface SmartWallet {
 }
 
 export default function Home() {
-  const [page, setPage] = useState<PageType>("pay");
+  const [page, setPage] = useState<PageType>("connectWallet");
 
   return (
     <div>
@@ -22,7 +21,7 @@ export default function Home() {
       {page === "inputRecipient" && (
         <RecipientAddressInput next={() => setPage("amountRecipient")} />
       )}
-      {page === "amountRecipient" && <PayReview next={() => setPage("reviewPay")} />}
+      {page === "amountRecipient" && <AmountInput next={() => setPage("reviewPay")} />}
     </div>
   );
 }
