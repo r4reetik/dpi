@@ -22,6 +22,8 @@ interface PayTcContextType {
   isInitialized: boolean;
   balances: { chainId: number; balance: string; symbol: string }[];
   fullScreenLoading: boolean;
+
+  setSelectedToken: Dispatch<SetStateAction<any>>;
 }
 
 const Context = createContext<PayTcContextType>({} as PayTcContextType);
@@ -31,6 +33,8 @@ const PayTCProvider = ({ children }: any) => {
   const [swAddress, setSwAddress] = useState<string | null>(null);
   const [balances, setBalances] = useState<any>();
   const [fullScreenLoading, setFullScreenLoading] = useState(false);
+
+  const [selectedToken, setSelectedToken] = useState();
 
   const isInitialized = !!swAddress;
 
@@ -88,14 +92,13 @@ const PayTCProvider = ({ children }: any) => {
   );
 
   useEffect(() => {
-    if (!isInitialized && account) {
-      signIn(account);
-    }
+    if (!isInitialized && account) signIn(account);
     return () => {};
   }, [account, isInitialized, signIn]);
 
   return (
-    <Context.Provider value={{ signIn, isInitialized, balances, fullScreenLoading }}>
+    <Context.Provider
+      value={{ signIn, isInitialized, balances, fullScreenLoading, setSelectedToken }}>
       {children}
     </Context.Provider>
   );

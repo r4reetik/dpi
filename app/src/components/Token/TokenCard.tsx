@@ -17,9 +17,10 @@ export type TokenType = {
 };
 interface TokenCardProps {
   token: TokenType;
+  onClick: () => void;
 }
 type chain = "Ethereum" | "Polygon";
-const TokenCard = ({ token }: TokenCardProps) => {
+const TokenCard = ({ token, onClick }: TokenCardProps) => {
   return (
     <div className={`flex flex-col items-center p-4 sm:flex-row bg-black-900 rounded-xl`}>
       <div className='flex items-center self-start w-full gap-3 '>
@@ -39,7 +40,7 @@ const TokenCard = ({ token }: TokenCardProps) => {
           </span>
         </div>
 
-        <button className='bg-black-800 p-[10px] rounded-full' onClick={() => {}}>
+        <button className='bg-black-800 p-[10px] rounded-full' onClick={onClick}>
           <UilMoneyInsert className='text-white' />
         </button>
       </div>
