@@ -1,12 +1,10 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+
 <a name="DPI"></a>
-
-
 
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://github.com/r4reetik/dpi">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -29,7 +27,7 @@
 
 
 <!-- TABLE OF CONTENTS -->
-<details>
+
   <summary>Table of Contents</summary>
   <ol>
     <li>
@@ -39,14 +37,15 @@
         <li><a href="#signing-data">Signing Data</a></li>
       </ul>
     </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-    </li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#built-with">Built With</a></li>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#road-map">Road Map</a></li>
+     <li><a href="#acknowledgments">Acknowledgments</a></li>
+    
   </ol>
-</details>
+
 
 
 
@@ -65,7 +64,7 @@ Smart wallets contain exec() function which is provided with data in the form of
 1. DPI UX:
 This layer generates data for user operations ,displays data or context , gets them signed by the user and bundles them into a single call.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 <!-- SECURITY VERIFICATIONS -->
 # Security
@@ -124,7 +123,7 @@ return address(uint160(uint(keccak256(
   * Funds can be transfered to address before a contract exists at the address and the funds will be available to the user when the contract is deployed.
 
 The contract implementations can be found in /backend/contracts (https://github.com/r4reetik/dpi/tree/main/backend/contracts)
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 <!--SIGNING DATA -->
 # Signing Data
@@ -161,7 +160,7 @@ const domain = {
   };
 
 ```
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 # Built With
 
@@ -171,7 +170,7 @@ const domain = {
 * [![Push Protocol][push]][push-protocol-url]
 * [![Covalent][covalent]][covalent-url]
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 # Installation
 
@@ -179,7 +178,7 @@ For both app and backend environment :
 
 1. yarn
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
 # Usage
@@ -192,10 +191,10 @@ The user can :
 3. Send and receive payments across chains via ENS or public addresses.
 4. Use QR code to send and receive payments.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 <!-- ROADMAP -->
-# Roadmap
+# Road Map
 
 - [x] Desinged and implemented smart wallet and factory contracts
 - [x] Added ECDSA verification for smart wallet
@@ -204,18 +203,18 @@ The user can :
 - [x] Added support for qr scanning
 
 Features proposed for future :
-- [ ] Add support for generating populated data for all kinds of transactions
+- [ ] Add support for generating populated data for all kinds of transactions on UI
 - [ ] Add EDDSA signature verification in smart wallets
 - [ ] Add compatability support for ERC4337
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 <!-- ACKNOWLEDGMENTS -->
 # Acknowledgments
 
 This repo is a part of the project DPI (Decentralized Payment Interface) which is a part of the hackathon hosted by ETHIndia and Devfolio.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
