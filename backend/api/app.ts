@@ -21,10 +21,16 @@ const app = express();
 const port = process.env.PORT ? process.env.PORT : 4000;
 app.use(express.json());
 app.use(cors({ origin: "*" }));
+import { Tokens, TokenType } from "../../app/src/constants/Tokens";
 
 const providers = new Map<number, JsonRpcProvider>([
-  [5, new Ethers.providers.JsonRpcProvider(process.env.ETHEREUM_GOERLI_URL!)],
-  [80001, new Ethers.providers.JsonRpcProvider(process.env.POLYGON_TESTNET_URL!)],
+  [
+    5,
+    new Ethers.providers.JsonRpcProvider(
+      "https://goerli.infura.io/v3/ac9d2c8a561a47739b23c52e6e7ec93f"
+    ),
+  ],
+  [80001, new Ethers.providers.JsonRpcProvider("https://rpc-mumbai.maticvigil.com/")],
 ]);
 
 const getConnextAddress = (chainId: number) => (chainId === 5 ? CONNEXT_Goerli : CONNEXT_Polygon);
@@ -33,6 +39,191 @@ const FACTORY_ABI = [
   "function createWallet(address _owner) external returns (address)",
   "function walletAddress(address _owner, uint256 _nonce) external view returns (address)",
 ];
+const ERC20_ABI = `[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "Approval",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "Transfer",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      }
+    ],
+    "name": "allowance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "approve",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "transfer",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "transferFrom",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]`;
 
 const WALLET_ABI_EXACT = `[
   {
@@ -274,6 +465,20 @@ function parseContractError(err: any): string {
 
 app.get("/", (req, res) => {
   res.status(200).send({ result: "ok" });
+});
+
+app.get("/getBalanceOf", async (req, res) => {
+  let balances: { [x: string]: string } = {};
+  const address = req.query.address as string;
+  let tokens = Object.keys(Tokens);
+  for (const token of tokens) {
+    const provider = getProvider(Tokens[token].chainId);
+    const contract = new ethers.Contract(Tokens[token].address, ERC20_ABI, provider);
+    const balance = await contract.balanceOf(address);
+    balances[token] = balance.toString();
+  }
+
+  res.status(200).send({ result: balances });
 });
 
 app.get("/addresses/:address", async (req, res) => {
