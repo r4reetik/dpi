@@ -4,15 +4,19 @@ import AngleDownCircle from "../icons/AngleDownCircle";
 
 import BottomSheet from "../BottomSheets/BottomSheet";
 import { TokenType } from "../../constants/Tokens";
+import { usePayTC } from "../../contexts/usePaytc";
+import TokenCard from "../Token/TokenCard";
 
 interface TokenBalanceInputProps {
   token: TokenType;
 }
 
 const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
+  const { tokens, setSelectedToken } = usePayTC();
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState<number | null>();
-  const [showTokens, setShowTokens] = useState(false);
+  const [showTokensBottomSheet, setShowTokensBottomSheet] = useState(false);
 
   const handleChange = (e: any) => {
     e.preventDefault();
@@ -60,7 +64,7 @@ const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
               <span className='tracking-wide md:text-lg'>{token.symbol}</span>
               <button
                 onClick={() => {
-                  setShowTokens(true);
+                  setShowTokensBottomSheet(true);
                 }}>
                 <AngleDownCircle className='ml-2' />
               </button>
@@ -102,9 +106,22 @@ const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
         </span> */}
       {/* ) : ( */}
       <div className='mb-2' />
-      {showTokens && (
-        <BottomSheet title='Select tokens' open setOpen={setShowTokens}>
-          <div>Please place respective component when tokens are ready</div>
+      {showTokensBottomSheet && (
+        <BottomSheet title='Select tokens' open setOpen={setShowTokensBottomSheet}>
+          <div className='flex flex-col gap-1 pt-6'>
+            {Object.values(tokens).map((_t) => {
+              return (
+                <TokenCard
+                  key={_t.address}
+                  token={_t}
+                  onClick={() => {
+                    setSelectedToken(_t);
+                    setShowTokensBottomSheet(false);
+                  }}
+                />
+              );
+            })}
+          </div>
         </BottomSheet>
       )}
     </div>
