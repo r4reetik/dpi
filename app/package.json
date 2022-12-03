@@ -13,6 +13,8 @@
     "@headlessui/react": "^1.7.4",
     "@iconscout/react-unicons": "^1.1.6",
     "@metamask/detect-provider": "^2.0.0",
+    "@renproject/chains": "^3.5.2",
+    "@renproject/ren": "^3.5.2",
     "@svgr/webpack": "^6.5.1",
     "@types/node": "18.11.10",
     "@types/react": "18.0.26",

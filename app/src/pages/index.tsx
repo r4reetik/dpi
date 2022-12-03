@@ -4,6 +4,8 @@ import Pay from "../components/Pay/Pay";
 import AmountInput from "../components/Pay/AmountInput";
 import RecipientAddressInput from "../components/RecipientAddressInput/RecipientAddressInput";
 
+import { useGateway } from "../hooks/useGateway";
+
 type PageType = "connectWallet" | "pay" | "reviewPay" | "inputRecipient" | "amountRecipient";
 
 export interface SmartWallet {
@@ -13,7 +15,9 @@ export interface SmartWallet {
 
 export default function Home() {
   const [page, setPage] = useState<PageType>("connectWallet");
-
+  // useGateway(async (status, hash) => {
+  //   console.log(status, hash);
+  // });
   return (
     <div>
       {page === "connectWallet" && <ConnectWallet next={() => setPage("pay")} />}
