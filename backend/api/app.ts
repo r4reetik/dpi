@@ -422,8 +422,6 @@ async function getSmartWallet(
     address: await factory.walletAddress(addr, nonce),
   };
   const code = await getProvider(chainID)!.getCode(wallet.address);
-  console.log(code);
-
   if (code === "0x") {
     if (!deploy) {
       return wallet;
@@ -448,10 +446,8 @@ async function getNonceMap(address: string, id: string): Promise<Map<string, Big
     if ((await provider.getCode(address)) !== "0x") {
       nonce = (await getWallet(address, chainId).nonce()).toNumber();
     }
-    console.log(chainId, nonce);
     nonceMap = nonceMap.set(chainId.toString(), nonce);
   });
-  console.log(nonceMap);
   return nonceMap;
 }
 
@@ -513,7 +509,6 @@ app.get("/addresses/:address", async (req, res) => {
     });
     return;
   }
-  console.log(id);
 
   const smartWallet = await getSmartWallet(
     signerAddress,
@@ -580,7 +575,6 @@ app.post("/transactions", async (req, res) => {
   let { chainID, address, userOps, signature } = req.body;
   chainID = parseInt(chainID);
   const wallet = SmartWallet__factory.connect(address, getSigner(chainID));
-  console.log(signature);
 
   const walletTx = await wallet.exec(userOps, signature, { gasLimit: 3000000 });
   const reciept = await walletTx.wait(1);
