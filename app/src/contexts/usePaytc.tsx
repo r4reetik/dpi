@@ -15,12 +15,13 @@ import { ChainIdToNetwork } from "../constants/ChainIdNetwork";
 import { SmartWallet } from "../pages";
 import { get } from "../utils/axios";
 
-import { addNewUser, db, getAddressData } from "../utils/firebase";
+import { addNewUser, getAddressData } from "../utils/firebase";
 
 interface PayTcContextType {
   signIn: (_mmAddress: string) => Promise<void>;
   isInitialized: boolean;
   balances: { chainId: number; balance: string; symbol: string }[];
+  fullScreenLoading: boolean;
 }
 
 const Context = createContext<PayTcContextType>({} as PayTcContextType);
@@ -29,12 +30,13 @@ const PayTCProvider = ({ children }: any) => {
   const { chainId, account } = useWeb3React();
   const [swAddress, setSwAddress] = useState<string | null>(null);
   const [balances, setBalances] = useState<any>();
+  const [fullScreenLoading, setFullScreenLoading] = useState(false);
 
   const isInitialized = !!swAddress;
 
   const fetchAndSetBalances = useCallback(async () => {
     if (!swAddress) return;
-    const _balances = []; // SW - 0x1085d0db6c015D3Ec73652e6Bb2790fC9A5E0464
+    const _balances = []; // SW - 0x1085d0db6c015D3Ec73652e6Bb2790fC9A5E0464 // 0xDd66499a43bE05730Ec97a2aB25c1B534B46e8c1
     for (const _chainId of Object.keys(ChainIdToNetwork)) {
       const data = await get(
         `https://api.covalenthq.com/v1/${_chainId}/address/${swAddress}/balances_v2/?key=${process.env.NEXT_PUBLIC_COVALENT_API_KEY}`
@@ -70,22 +72,17 @@ const PayTCProvider = ({ children }: any) => {
 
   const signIn = useCallback(
     async (_mmAddress: string) => {
-      const data = await getAddressData("mmAddress", _mmAddress);
-      let _swAddress: string | null = null;
-      if (data) {
-        // old account
-        const { swAddress: swa } = data;
-        _swAddress = swa;
-      } else {
-        // new account
-        const { address: swa } = await getOrDeploySmartWallet(_mmAddress, chainId!);
+      setFullScreenLoading(true);
+      const { address: swa } = await getOrDeploySmartWallet(_mmAddress, chainId!);
+      const data = await getAddressData("swAddress", swa);
 
+      if (!data) {
         await addNewUser(_mmAddress, swa);
-        _swAddress = swa;
       }
 
-      setSwAddress(_swAddress);
-      fetchAndSetBalances();
+      setSwAddress(swa);
+      await fetchAndSetBalances();
+      setFullScreenLoading(false);
     },
     [chainId, fetchAndSetBalances, getOrDeploySmartWallet]
   );
@@ -98,7 +95,9 @@ const PayTCProvider = ({ children }: any) => {
   }, [account, isInitialized, signIn]);
 
   return (
-    <Context.Provider value={{ signIn, isInitialized, balances }}>{children}</Context.Provider>
+    <Context.Provider value={{ signIn, isInitialized, balances, fullScreenLoading }}>
+      {children}
+    </Context.Provider>
   );
 };
 
