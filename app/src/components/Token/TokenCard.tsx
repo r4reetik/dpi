@@ -5,24 +5,23 @@ import Badge from "../Badge";
 import { colors } from "../../constants/chain";
 
 export type TokenType = {
-  address: string,
-  chainId: number,
-  symbol: string,
-  decimals: number,
-  name: string,
-  priceUSD: string,
-  logoURI: string,
-  coinKey: string,
-  chain: string
-}
+  address: string;
+  chainId: number;
+  symbol: string;
+  decimals: number;
+  name: string;
+  priceUSD: string;
+  logoURI: string;
+  coinKey: string;
+  chain: string;
+};
 interface TokenCardProps {
-  token: TokenType
+  token: TokenType;
 }
-type chain = "Ethereum" | "Polygon"
+type chain = "Ethereum" | "Polygon";
 const TokenCard = ({ token }: TokenCardProps) => {
   return (
-    <div
-      className={`flex flex-col items-center px-8 py-4 sm:flex-row bg-black-900 md:bg-black-800 rounded-xl`}>
+    <div className={`flex flex-col items-center p-4 sm:flex-row bg-black-900 rounded-xl`}>
       <div className='flex items-center self-start w-full gap-3 '>
         <span className='relative'>
           <Image src={token.logoURI} width={48} height={48} alt={`logo`} />
@@ -40,7 +39,7 @@ const TokenCard = ({ token }: TokenCardProps) => {
           </span>
         </div>
 
-        <button className='bg-black-700 p-[10px] rounded-full md:hidden' onClick={() => { }}>
+        <button className='bg-black-800 p-[10px] rounded-full' onClick={() => {}}>
           <UilMoneyInsert className='text-white' />
         </button>
       </div>
@@ -48,4 +47,4 @@ const TokenCard = ({ token }: TokenCardProps) => {
   );
 };
 
-export default TokenCard
+export default TokenCard;
