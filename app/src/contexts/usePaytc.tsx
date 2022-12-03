@@ -16,7 +16,7 @@ import { addNewUser, db, getAddressData } from "../utils/firebase";
 interface PayTcContextType {
   signIn: (_mmAddress: string) => Promise<void>;
   isInitialized: boolean;
-  mmAddress : string | null
+  mmAddress: string | null;
 }
 
 const Context = createContext<PayTcContextType>({} as PayTcContextType);
@@ -50,8 +50,9 @@ const PayTCProvider = ({ children }: any) => {
     setSwAddress(_swAddress);
   };
 
-  return <Context.Provider value={{ signIn, isInitialized,mmAddress
-  }}>{children}</Context.Provider>;
+  return (
+    <Context.Provider value={{ signIn, isInitialized, mmAddress }}>{children}</Context.Provider>
+  );
 };
 
 const usePayTC = () => {
