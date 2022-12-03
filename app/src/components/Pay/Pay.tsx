@@ -24,7 +24,6 @@ const Pay = () => {
           Your Assets
         </div>
         <div className='flex flex-col gap-2 mb-2 justify-between align-middle'>
-          {/* map */}
           <TokenCard />
           <TokenCard />
           <TokenCard />
