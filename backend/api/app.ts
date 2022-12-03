@@ -380,12 +380,6 @@ export interface UserOp {
   data: Ethers.utils.BytesLike;
 }
 
-interface Transaction {
-  userOps: UserOp[];
-  chainID: number;
-  signature: string;
-}
-
 function getProvider(chainID: number): JsonRpcProvider {
   const provider = providers.get(chainID);
   return provider ? provider : new ethers.providers.JsonRpcProvider("http://localhost:8545");
@@ -422,8 +416,6 @@ async function getSmartWallet(
     address: await factory.walletAddress(addr, nonce),
   };
   const code = await getProvider(chainID)!.getCode(wallet.address);
-  console.log(code);
-
   if (code === "0x") {
     if (!deploy) {
       return wallet;
@@ -448,19 +440,9 @@ async function getNonceMap(address: string, id: string): Promise<Map<string, Big
     if ((await provider.getCode(address)) !== "0x") {
       nonce = (await getWallet(address, chainId).nonce()).toNumber();
     }
-    console.log(chainId, nonce);
     nonceMap = nonceMap.set(chainId.toString(), nonce);
   });
-  console.log(nonceMap);
   return nonceMap;
-}
-
-function parseContractError(err: any): string {
-  return (
-    err as {
-      reason: string;
-    }
-  ).reason;
 }
 
 app.get("/", (req, res) => {
@@ -468,6 +450,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/getBalanceOf", async (req, res) => {
+  console.log("/getBalanceOf");
+
   let balances: { [x: string]: string } = {};
   const address = req.query.address as string;
   let tokens = Object.keys(Tokens);
@@ -482,6 +466,8 @@ app.get("/getBalanceOf", async (req, res) => {
 });
 
 app.get("/getBalanceOfV2", async (req, res) => {
+  console.log("getBalanceOfV2");
+
   let balances: { [x: string]: string } = {};
   const address = req.query.address as string;
   let tokens = Object.keys(Tokens);
@@ -502,6 +488,8 @@ app.get("/getBalanceOfV2", async (req, res) => {
 });
 
 app.get("/addresses/:address", async (req, res) => {
+  console.log("addresses");
+
   const signerAddress = req.params.address;
   const id = req.query.id ? req.query.id.toString() : "0";
 
@@ -513,7 +501,6 @@ app.get("/addresses/:address", async (req, res) => {
     });
     return;
   }
-  console.log(id);
 
   const smartWallet = await getSmartWallet(
     signerAddress,
@@ -530,6 +517,8 @@ app.get("/addresses/:address", async (req, res) => {
 });
 
 app.post("/getTypedData", async (req, res) => {
+  console.log("/getTypedData");
+
   let { domainID, address, chainID, recipient, asset, delegate, amount, slippage } = req.body;
   chainID = parseInt(chainID);
   const connextContract = IConnext__factory.connect(
@@ -572,15 +561,18 @@ app.post("/getTypedData", async (req, res) => {
 });
 
 app.get("/relayer", async (req, res) => {
+  console.log("/relayer");
+
   const chainid = parseInt(req.query.chainId!.toString());
   res.status(200).send({ address: await getSigner(chainid).getAddress() });
 });
 
 app.post("/transactions", async (req, res) => {
+  console.log("/transactions");
+
   let { chainID, address, userOps, signature } = req.body;
   chainID = parseInt(chainID);
   const wallet = SmartWallet__factory.connect(address, getSigner(chainID));
-  console.log(signature);
 
   const walletTx = await wallet.exec(userOps, signature, { gasLimit: 3000000 });
   const reciept = await walletTx.wait(1);
