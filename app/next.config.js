@@ -4,6 +4,7 @@ const webpack = require("webpack");
 
 const nextConfig = {
   reactStrictMode: true,
+  assetPrefix: "./",
   swcMinify: true,
   webpack(config, { buildId }) {
     config.module.rules.push({ test: /\.svg$/, use: ["@svgr/webpack"] });
@@ -11,6 +12,7 @@ const nextConfig = {
   },
   images: {
     domains: ["static.debank.com", "icons.iconarchive.com", "tokens.1inch.io"],
+    unoptimized: true,
   },
 };
 
