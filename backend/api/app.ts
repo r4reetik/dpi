@@ -503,6 +503,8 @@ app.get("/addresses/:address", async (req, res) => {
   }
   let smartWallet: any;
   for (const chain of [5, 80001]) {
+    const s = performance.now();
+
     smartWallet = await getSmartWallet(signerAddress, id, chain, true);
   }
 
@@ -513,46 +515,60 @@ app.get("/addresses/:address", async (req, res) => {
 
 app.post("/getTypedData", async (req, res) => {
   console.log("/getTypedData");
-
-  let { domainID, address, chainID, recipient, asset, delegate, amount, slippage } = req.body;
-  chainID = parseInt(chainID);
-  const connextContract = IConnext__factory.connect(
-    getConnextAddress(parseInt(chainID)),
-    getSigner(chainID)
-  );
-  const metaData = await connextContract.populateTransaction.xcall(
-    domainID,
+  let {
+    domainID: targetDomainID,
+    originDomainID,
+    address,
+    chainID,
     recipient,
     asset,
     delegate,
     amount,
     slippage,
-    "0x"
-  );
+  } = req.body;
+  chainID = parseInt(chainID);
 
   const wallet = SmartWallet__factory.connect(address, getSigner(chainID));
-
   const token = ERC20__factory.connect(asset, getSigner(chainID));
 
-  const approveTx = await token.populateTransaction.approve(connextContract.address, amount);
-
-  const userOp: UserOp[] = [
-    {
+  const userOp: UserOp[] = [];
+  if (targetDomainID !== originDomainID) {
+    const connextContract = IConnext__factory.connect(
+      getConnextAddress(parseInt(chainID)),
+      getSigner(chainID)
+    );
+    const metaData = await connextContract.populateTransaction.xcall(
+      targetDomainID,
+      recipient,
+      asset,
+      delegate,
+      amount,
+      slippage,
+      "0x"
+    );
+    const approveTx = await token.populateTransaction.approve(connextContract.address, amount);
+    userOp.push({
       to: approveTx.to!,
       data: approveTx.data!,
       amount: "0",
-    },
-
-    {
+    });
+    userOp.push({
       to: metaData.to!,
       data: metaData.data!,
       amount: "0",
-    },
-  ];
+    });
+    const metaTx = getMetaTx(userOp, address, +(await wallet.nonce()), chainID, chainID);
 
-  const metaTx = getMetaTx(userOp, address, +(await wallet.nonce()), chainID, chainID);
-
-  res.status(200).json({ ...metaTx, userOps: userOp });
+    res.status(200).json({ ...metaTx, userOps: userOp });
+  } else {
+    const transferTx = await token.populateTransaction.transfer(recipient, amount);
+    userOp.push({
+      to: transferTx.to!,
+      data: transferTx.data!,
+      amount: "0",
+    });
+    res.status(200).json({ ...transferTx, userOps: userOp });
+  }
 });
 
 app.get("/relayer", async (req, res) => {

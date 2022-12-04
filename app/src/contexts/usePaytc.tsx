@@ -201,6 +201,7 @@ const PayTCProvider = ({ children }: any) => {
       domainID: targetDomainId,
       address: swAddress,
       chainID: chainId,
+      originDomainID: selectedToken.domainId,
       recipient: recipientSwAddress,
       asset: tokenAddress,
       delegate: swAddress,
