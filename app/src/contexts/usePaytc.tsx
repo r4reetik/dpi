@@ -91,9 +91,8 @@ const PayTCProvider = ({ children }: any) => {
             });
           }
         }
-      }
-      else{
-        setTransactions(sTransactions)
+      } else {
+        setTransactions(sTransactions);
       }
     }
     setTransactions(_transactions);
@@ -229,18 +228,6 @@ const PayTCProvider = ({ children }: any) => {
     if (!isInitialized && account) signIn(account);
     return () => {};
   }, [account, isInitialized, signIn]);
-
-  useEffect(() => {
-    activate(MetaMask);
-
-    return () => {};
-  }, [activate]);
-
-  useEffect(() => {
-    activate(MetaMask);
-
-    return () => {};
-  }, [activate]);
 
   return (
     <Context.Provider
