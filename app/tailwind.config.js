@@ -11,10 +11,10 @@ module.exports = {
         width: "width",
       },
       colors: {
-        primary: "#00ADB5",
-        white: "#EEEEEE",
-        "black-900": "#222831",
-        "black-800": "#393E46",
+        primary: "#6e28d9",
+        white: "#FAFAFA",
+        "black-900": "#111318",
+        "black-800": "#1C1D21",
       },
       spacing: {
         "630px": "630px",

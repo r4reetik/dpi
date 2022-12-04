@@ -1,12 +1,19 @@
 import { useState } from "react";
 import ConnectWallet from "../components/ConnectWallet/ConnectWallet";
 import Pay from "../components/Pay/Pay";
-import AmountInput from "../components/Pay/AmountInput";
 import RecipientAddressInput from "../components/RecipientAddressInput/RecipientAddressInput";
+import History from "../components/TransactionsLog/History";
 
-import { useGateway } from "../hooks/useGateway";
+import AmountRecipient from "../components/Pay/AmountRecipient";
+import Layout from "../components/Layout";
 
-type PageType = "connectWallet" | "pay" | "reviewPay" | "inputRecipient" | "amountRecipient";
+export type PageType =
+  | "connectWallet"
+  | "pay"
+  | "reviewPay"
+  | "inputRecipient"
+  | "amountRecipient"
+  | "history";
 
 export interface SmartWallet {
   address: string;
@@ -15,17 +22,33 @@ export interface SmartWallet {
 
 export default function Home() {
   const [page, setPage] = useState<PageType>("connectWallet");
-  // useGateway(async (status, hash) => {
-  //   console.log(status, hash);
-  // });
+
   return (
     <div>
-      {page === "connectWallet" && <ConnectWallet next={() => setPage("pay")} />}
-      {page === "pay" && <Pay next={() => setPage("inputRecipient")} />}
-      {page === "inputRecipient" && (
-        <RecipientAddressInput next={() => setPage("amountRecipient")} />
+      {page === "connectWallet" && (
+        <Layout>
+          <ConnectWallet next={() => setPage("pay")} />
+        </Layout>
       )}
-      {page === "amountRecipient" && <AmountInput reset={() => setPage("pay")} />}
+      {page === "pay" && (
+        <Layout>
+          <Pay next={() => setPage("inputRecipient")} setPage={setPage} />
+        </Layout>
+      )}
+      {page === "inputRecipient" && (
+        <Layout>
+          <RecipientAddressInput
+            next={() => setPage("amountRecipient")}
+            onBack={() => setPage("pay")}
+          />
+        </Layout>
+      )}
+      {page === "amountRecipient" && (
+        <Layout>
+          <AmountRecipient next={() => setPage("pay")} onBack={() => setPage("inputRecipient")} />
+        </Layout>
+      )}
+      {page === "history" && <History onBack={() => setPage("pay")} />}
     </div>
   );
 }

@@ -22,10 +22,8 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <Web3ReactProvider getLibrary={(p) => new Web3Provider(p)}>
       <PayTCProvider>
-        <Layout>
           <ToastContainer {...toastConfig} />
           <Component {...pageProps} />
-        </Layout>
       </PayTCProvider>
     </Web3ReactProvider>
   );

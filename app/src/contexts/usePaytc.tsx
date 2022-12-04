@@ -17,20 +17,26 @@ import { SmartWalletBaseUrl } from "../constants/APIs";
 
 import { Tokens, TokenType } from "../constants/Tokens";
 import { MetaMask } from "../constants/WalletInfo";
+import { unstable_batchedUpdates } from "react-dom";
 import { SmartWallet } from "../pages";
 import { get, post } from "../utils/axios";
 import { getAddressFromEns } from "../utils/ens";
 
 import { addNewUser, getAddressData } from "../utils/firebase";
+import { ChainIdToNetwork } from "../constants/ChainIdNetwork";
+
+export type Flow = "connectWallet" | "pay" | "payReview" | "input" | "history";
 
 interface PayTcContextType {
   signIn: (_mmAddress: string) => Promise<void>;
   isInitialized: boolean;
   tokens: { [x: string]: TokenType };
+  transactions: any;
+  swAddress: string | null;
   fullScreenLoading: boolean;
   recipient: string | null;
   setFullScreenLoading: Dispatch<SetStateAction<boolean>>;
-  submitTransfer: () => Promise<void>;
+  submitTransfer: () => Promise<any>;
 
   setRecipient: Dispatch<SetStateAction<string | null>>;
 
@@ -46,6 +52,7 @@ const PayTCProvider = ({ children }: any) => {
   const { chainId, account, activate } = useWeb3React();
   const [swAddress, setSwAddress] = useState<string | null>(null);
   const [tokens, setTokens] = useState<{ [x: string]: TokenType }>(Tokens);
+  const [transactions, setTransactions] = useState<any>();
   const [fullScreenLoading, setFullScreenLoading] = useState(false);
 
   const [recipient, setRecipient] = useState<string | null>(null);
@@ -53,6 +60,40 @@ const PayTCProvider = ({ children }: any) => {
   const [amount, setAmount] = useState<string>("");
 
   const isInitialized = !!swAddress;
+  const fetchAndSetTransactions = useCallback(async () => {
+    if (!swAddress) return;
+    const _transactions = []; // SW - 0x1085d0db6c015D3Ec73652e6Bb2790fC9A5E0464 // 0xDd66499a43bE05730Ec97a2aB25c1B534B46e8c1
+    for (const _chainId of Object.keys(ChainIdToNetwork)) {
+      // @ts-ignore
+      const data = await get(
+        `https://api.covalenthq.com/v1/${_chainId}/address/${swAddress}/transactions_v2/?key=${process.env.NEXT_PUBLIC_COVALENT_API_KEY}`
+      );
+
+      if (data) {
+        console.log("data: ", data);
+        // @ts-ignore
+        const { items } = data.data;
+        // @ts-ignore
+        for (const _t of items) {
+          const hasSent = _t.from_address === swAddress;
+          const hasReceived = _t.to_address === swAddress;
+          if (_t.balance !== "0") {
+            _transactions.push({
+              timestamp: _t.block_signed_at,
+              status: _t.successful,
+              type: hasSent ? "sent" : hasReceived ? "received" : "",
+              value: _t.value,
+              displayAddress: hasSent ? _t.to_address : hasReceived ? _t.from_address : "",
+              txHash: _t.tx_hash,
+              token: _t.log_events && _t.log_events[0].sender_contract_ticker_symbol,
+              decimals: _t.log_events && _t.log_events[0].sender_contract_decimals,
+            });
+          }
+        }
+      }
+    }
+    setTransactions(_transactions);
+  }, [swAddress]);
 
   const fetchAndSetBalances = useCallback(
     async (_swAddress?: string) => {
@@ -114,9 +155,11 @@ const PayTCProvider = ({ children }: any) => {
 
       await fetchAndSetBalances(swa);
       setSwAddress(swa);
+      await fetchAndSetBalances();
+      await fetchAndSetTransactions();
       setFullScreenLoading(false);
     },
-    [chainId, fetchAndSetBalances, getOrDeploySmartWallet]
+    [chainId, fetchAndSetBalances, fetchAndSetTransactions, getOrDeploySmartWallet]
   );
 
   const submitTransfer = async () => {
@@ -168,14 +211,13 @@ const PayTCProvider = ({ children }: any) => {
 
     const signature = await provider.getSigner()._signTypedData(res.domain, res.types, res.value);
     const signatureEncoded = new AbiCoder().encode(["uint256", "bytes"], [chainId, signature]);
-    const rrr = await post(`${SmartWalletBaseUrl}/transactions`, {
+    const submitTx: any = await post(`${SmartWalletBaseUrl}/transactions`, {
       chainID: chainId,
       signature: signatureEncoded,
       userOps: res.userOps,
       address: swAddress, // my sw address?
     });
-    console.log(rrr);
-    // TODO: show toast saying tx was a success
+    return submitTx;
   };
 
   useEffect(() => {
@@ -189,11 +231,19 @@ const PayTCProvider = ({ children }: any) => {
     return () => {};
   }, [activate]);
 
+  useEffect(() => {
+    activate(MetaMask);
+
+    return () => {};
+  }, [activate]);
+
   return (
     <Context.Provider
       value={{
         signIn,
+        transactions,
         isInitialized,
+        swAddress: swAddress,
         tokens,
         fullScreenLoading,
         setFullScreenLoading,
