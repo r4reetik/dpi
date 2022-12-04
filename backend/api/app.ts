@@ -501,18 +501,13 @@ app.get("/addresses/:address", async (req, res) => {
     });
     return;
   }
+  let smartWallet: any;
+  for (const chain of [5, 80001]) {
+    smartWallet = await getSmartWallet(signerAddress, id, chain, true);
+  }
 
-  const smartWallet = await getSmartWallet(
-    signerAddress,
-    id,
-    parseInt(req.query.chainId.toString()),
-    true
-  );
-
-  const nonce = smartWallet.wallet ? await smartWallet.wallet.nonce() : 0;
   res.status(200).send({
     address: smartWallet.address,
-    nonces: { [req.query.chainId.toString()]: nonce },
   });
 });
 
