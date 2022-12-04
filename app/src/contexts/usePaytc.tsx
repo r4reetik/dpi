@@ -16,8 +16,7 @@ import {
 import { SmartWalletBaseUrl } from "../constants/APIs";
 
 import { Tokens, TokenType } from "../constants/Tokens";
-import { MetaMask } from "../constants/WalletInfo";
-import { unstable_batchedUpdates } from "react-dom";
+
 import { SmartWallet } from "../pages";
 import { get, post } from "../utils/axios";
 import { getAddressFromEns } from "../utils/ens";
@@ -71,7 +70,6 @@ const PayTCProvider = ({ children }: any) => {
       );
 
       if (data) {
-        console.log("data: ", data);
         // @ts-ignore
         const { items } = data.data;
         // @ts-ignore
