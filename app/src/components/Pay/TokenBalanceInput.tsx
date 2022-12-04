@@ -8,15 +8,14 @@ import TokenCard from "../Token/TokenCard";
 import BottomSheet from "../BottomSheets/BottomSheet";
 import { Tokens, TokenType } from "../../constants/Tokens";
 import { usePayTC } from "../../contexts/usePaytc";
-import { PageType } from "../../pages";
+
 import BigNumber from "bignumber.js";
 
 interface TokenBalanceInputProps {
-  token: TokenType,
-  next: () => void
+  token: TokenType;
 }
 
-const TokenBalanceInput = ({ token,next }: TokenBalanceInputProps) => {
+const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
   const { tokens, setSelectedToken, setAmount, selectedToken } = usePayTC();
   const inputRef = useRef<HTMLInputElement>(null);
   const inputChangeRef = useRef<any>(null);

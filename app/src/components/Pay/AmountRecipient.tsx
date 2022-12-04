@@ -21,19 +21,17 @@ const AmountRecipient = ({ onBack, next }: AmountRecipient) => {
   const [showStatus, setShowStatus] = useState(false);
   return (
     <div className='grid  min-h-[80vh]'>
-      <div className='px-6 py-2 grid grid-flow-col justify-between'>
+      <div className='grid justify-between grid-flow-col px-6 py-2'>
         <span className=''>Pay</span>
         <div
           onClick={onBack}
-          className=' flex items-center w-8 h-8 p-1 rounded-full bg-black-900 md:p-2 md:w-10 md:h-10 sm:top-6 right-4 xs:right-6 sm:right-24'>
+          className='flex items-center w-8 h-8 p-1 rounded-full  bg-black-900 md:p-2 md:w-10 md:h-10 sm:top-6 right-4 xs:right-6 sm:right-24'>
           <UilArrowLeft className='flex w-full h-full m-auto text-gray-400' />
         </div>
       </div>
       <div className='flex flex-col justify-around gap-10'>
         <ContentWrapper label={"You Send"}>
-          <div className='flex flex-col gap-1'>
-            {token && <TokenBalanceInput next={next} token={token} />}
-          </div>
+          <div className='flex flex-col gap-1'>{token && <TokenBalanceInput token={token} />}</div>
         </ContentWrapper>
         <ContentWrapper label={"To"}>
           <div className='flex flex-col gap-1'>
@@ -59,8 +57,8 @@ const AmountRecipient = ({ onBack, next }: AmountRecipient) => {
         </button>
         {showStatus && (
           <BottomSheet setOpen={setShowStatus} open title='Status'>
-            <div className='flex p-6 m-6 flex-col items-center'>
-              <div className=' mx-auto text-center '>Your transaction has been submitted.</div>
+            <div className='flex flex-col items-center p-6 m-6'>
+              <div className='mx-auto text-center '>Your transaction has been submitted.</div>
               <a
                 className='text-primary'
                 href={`https://testnet.amarok.connextscan.io/address/${swAddress}`}>
