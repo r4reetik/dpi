@@ -6,6 +6,7 @@ import RecipientAddressInput from "../components/RecipientAddressInput/Recipient
 import History from "../components/TransactionsLog/History";
 
 import AmountRecipient from "../components/Pay/AmountRecipient";
+import { BTCDeposit } from "../components/BTCDeposit/BTCDeposit";
 
 export type PageType =
   | "connectWallet"
@@ -13,7 +14,8 @@ export type PageType =
   | "reviewPay"
   | "inputRecipient"
   | "amountRecipient"
-  | "history";
+  | "history"
+  | "btcDeposit";
 
 export interface SmartWallet {
   address: string;
@@ -37,6 +39,7 @@ export default function Home() {
         <AmountRecipient next={() => setPage("pay")} onBack={() => setPage("inputRecipient")} />
       )}
       {page === "history" && <History onBack={() => setPage("pay")} />}
+      {page === "btcDeposit" && <BTCDeposit onBack={() => setPage("pay")} />}
     </div>
   );
 }

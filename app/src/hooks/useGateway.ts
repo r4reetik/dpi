@@ -1,9 +1,10 @@
 import { Bitcoin, Ethereum } from "@renproject/chains";
 import RenJS from "@renproject/ren";
 import { ethers, providers } from "ethers";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export const useGateway = (cb: (status: string, hash?: string) => Promise<void>) => {
+export const useGateway = (cb: (status: string, hash?: string) => void) => {
+  const [gatewayAddress, setGatewayAddress] = useState<string | null>(null);
   const listen = async () => {
     const provider = new ethers.providers.Web3Provider((window as any).ethereum, "any");
     const signer = provider.getSigner();
@@ -23,33 +24,34 @@ export const useGateway = (cb: (status: string, hash?: string) => Promise<void>)
       from: bitcoin.GatewayAddress(),
       to: ethereum.Account(),
     });
+
+    setGatewayAddress(gateway.gatewayAddress!);
+
     gateway.on("transaction", (tx) => {
       (async () => {
-        console.log(tx.params);
-        await cb("tx1_pending");
+        cb("tx1_pending");
 
         await tx.in.wait();
-        await cb("tx2_pending");
-        await tx.renVM.submit().on("progress", console.log);
+        cb("tx2_pending");
+        await tx.renVM.submit();
         await tx.renVM.wait();
-        await cb("tx3_pending");
+        cb("tx3_pending");
+        if (tx.out.submit) {
+          await tx.out.submit!({
+            txConfig: {
+              gasLimit: 1000000,
+            },
+          });
+          await tx.out.wait();
 
-        await tx.out.submit!({
-          txConfig: {
-            gasLimit: 1000000,
-          },
-        });
-        await tx.out.wait();
-
-        const outTx = tx.out.progress.transaction!;
-        console.log("Done:", outTx.txHash);
-        await cb("tx3_done", outTx.txHash);
-
-        console.log(tx.toChain.transactionExplorerLink(outTx));
+          const outTx = tx.out.progress.transaction!;
+          cb("tx3_done", outTx.txHash);
+        }
       })().catch(console.error);
     });
   };
   useEffect(() => {
-    listen();
+    if (gatewayAddress === null) listen();
   }, []);
+  return gatewayAddress;
 };
