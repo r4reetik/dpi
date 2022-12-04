@@ -13,9 +13,12 @@ function ConnectWallet({ next }: { next: () => void }) {
   }, [isInitialized, next]);
 
   return (
-    <div className='mt-30'>
+    <div className='mt-10'>
+      <h2 className='text-4xl font-extrabold'>Welcome to the web3 UPI <br/>
+      <span className="text-primary">No Gas <br/> No Complexity <br />Simplest UX <br /> One Address for any chain</span>
+      </h2>
       <button
-        className='text-xl bg-primary p-4 mx-auto rounded-lg flex flex-col gap-1 overflow-y-auto max-h-[450px]'
+        className='text-xl mt-5 bg-primary p-4 mx-auto rounded-lg flex flex-col gap-1 overflow-y-auto max-h-[450px]'
         onClick={() => activate(MetaMask)}>
         Connect Wallet
       </button>
