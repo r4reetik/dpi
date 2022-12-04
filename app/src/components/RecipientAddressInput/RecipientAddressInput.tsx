@@ -10,35 +10,40 @@ function RecipientAddressInput({ onBack, next }: { onBack: () => void; next: () 
   const { setFullScreenLoading, setRecipient } = usePayTC();
 
   const resolve = async (text: string) => {
-    setFullScreenLoading(true);
-
     let recipientSwAddress;
-    if (text.endsWith(".eth")) {
-      const mm = await getAddressFromEns(text);
-      if (!mm) throw new Error("Invalid ENS");
 
-      const data = await getAddressData("mmAddress", mm);
-      if (!data) throw new Error(`MM Address ${mm} not found`);
+    try {
+      setFullScreenLoading(true);
 
-      recipientSwAddress = data.swAddress;
-    } else {
-      const mmData = await getAddressData("mmAddress", text);
-      if (!mmData) {
-        const swData = await getAddressData("swAddress", text);
-        if (!swData) throw new Error(`${text} invalid wallet address`);
+      if (text.endsWith(".eth")) {
+        const mm = await getAddressFromEns(text);
+        if (!mm) throw new Error("Invalid ENS");
 
-        recipientSwAddress = text;
-      } else recipientSwAddress = mmData.swAddress;
+        const data = await getAddressData("mmAddress", mm);
+        if (!data) throw new Error(`MM Address ${mm} not found`);
+
+        recipientSwAddress = data.swAddress;
+      } else {
+        const mmData = await getAddressData("mmAddress", text);
+        if (!mmData) {
+          const swData = await getAddressData("swAddress", text);
+          if (!swData) throw new Error(`${text} invalid wallet address`);
+
+          recipientSwAddress = text;
+        } else recipientSwAddress = mmData.swAddress;
+      }
+
+      setRecipient(text);
+      next();
+    } catch (e) {
+      console.error(e);
     }
-
-    setRecipient(text);
     setFullScreenLoading(false);
-    next();
   };
 
   return (
-    <div className='flex flex-col align-middle justify-center'>
-      <div className='px-6 py-2 mb-4 flex justify-between'>
+    <div className='flex flex-col justify-center align-middle'>
+      <div className='flex justify-between px-6 py-2 mb-4'>
         <div className='text-xl font-extrabold'>Scan</div>
         <div
           onClick={onBack}
@@ -47,7 +52,7 @@ function RecipientAddressInput({ onBack, next }: { onBack: () => void; next: () 
         </div>
       </div>
       <ScanQR resolve={resolve} />
-      <div className='-mt-20 mb-10 text-3xl text-center'>OR</div>
+      <div className='mb-10 -mt-20 text-3xl text-center'>OR</div>
       <Input resolve={resolve} />
     </div>
   );

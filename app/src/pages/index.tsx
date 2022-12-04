@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 import ConnectWallet from "../components/ConnectWallet/ConnectWallet";
 import Pay from "../components/Pay/Pay";
 import RecipientAddressInput from "../components/RecipientAddressInput/RecipientAddressInput";
 import History from "../components/TransactionsLog/History";
 
 import AmountRecipient from "../components/Pay/AmountRecipient";
-import Layout from "../components/Layout";
 
 export type PageType =
   | "connectWallet"
@@ -25,28 +25,16 @@ export default function Home() {
 
   return (
     <div>
-      {page === "connectWallet" && (
-        <Layout>
-          <ConnectWallet next={() => setPage("pay")} />
-        </Layout>
-      )}
-      {page === "pay" && (
-        <Layout>
-          <Pay next={() => setPage("inputRecipient")} setPage={setPage} />
-        </Layout>
-      )}
+      {page === "connectWallet" && <ConnectWallet next={() => setPage("pay")} />}
+      {page === "pay" && <Pay next={() => setPage("inputRecipient")} setPage={setPage} />}
       {page === "inputRecipient" && (
-        <Layout>
-          <RecipientAddressInput
-            next={() => setPage("amountRecipient")}
-            onBack={() => setPage("pay")}
-          />
-        </Layout>
+        <RecipientAddressInput
+          next={() => setPage("amountRecipient")}
+          onBack={() => setPage("pay")}
+        />
       )}
       {page === "amountRecipient" && (
-        <Layout>
-          <AmountRecipient next={() => setPage("pay")} onBack={() => setPage("inputRecipient")} />
-        </Layout>
+        <AmountRecipient next={() => setPage("pay")} onBack={() => setPage("inputRecipient")} />
       )}
       {page === "history" && <History onBack={() => setPage("pay")} />}
     </div>

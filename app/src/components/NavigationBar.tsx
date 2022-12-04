@@ -11,13 +11,13 @@ const NavigationBar = () => {
 
   useEffect(() => {
     (async () => {
-      if (account) {
+      if (account && !ens) {
         const _ens = await getEnsOrAddress(account);
         setEns(_ens);
       }
     })();
     return () => {};
-  }, [account]);
+  }, [account, ens]);
 
   return (
     <nav className='w-full'>
