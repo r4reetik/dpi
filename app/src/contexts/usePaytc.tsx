@@ -24,6 +24,7 @@ import { getAddressFromEns } from "../utils/ens";
 
 import { addNewUser, getAddressData } from "../utils/firebase";
 import { ChainIdToNetwork } from "../constants/ChainIdNetwork";
+import { sTransactions } from "../constants/testTransactions";
 
 export type Flow = "connectWallet" | "pay" | "payReview" | "input" | "history";
 
@@ -90,6 +91,9 @@ const PayTCProvider = ({ children }: any) => {
             });
           }
         }
+      }
+      else{
+        setTransactions(sTransactions)
       }
     }
     setTransactions(_transactions);
