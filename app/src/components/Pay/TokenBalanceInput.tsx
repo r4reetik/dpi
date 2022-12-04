@@ -1,20 +1,23 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import AngleDownCircle from "../icons/AngleDownCircle";
-
-import BottomSheet from "../BottomSheets/BottomSheet";
-import { TokenType } from "../../constants/Tokens";
-import { usePayTC } from "../../contexts/usePaytc";
+import { toFixed } from "../../utils/misc";
+import { inputToFixed } from "../../utils/misc";
+import { LoadingIndicator } from "../icons/LoadingIndicator";
 import TokenCard from "../Token/TokenCard";
+import BottomSheet from "../BottomSheets/BottomSheet";
+import { Tokens, TokenType } from "../../constants/Tokens";
+import { usePayTC } from "../../contexts/usePaytc";
+import { PageType } from "../../pages";
 import BigNumber from "bignumber.js";
 
 interface TokenBalanceInputProps {
-  token: TokenType;
+  token: TokenType,
+  next: () => void
 }
 
-const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
+const TokenBalanceInput = ({ token,next }: TokenBalanceInputProps) => {
   const { tokens, setSelectedToken, setAmount, selectedToken } = usePayTC();
-
   const inputRef = useRef<HTMLInputElement>(null);
   const inputChangeRef = useRef<any>(null);
 
@@ -70,7 +73,7 @@ const TokenBalanceInput = ({ token }: TokenBalanceInputProps) => {
               inputMode='decimal'
               value={input}
               ref={inputRef}
-              className='peer text-left md:text-right w-full border-none outline-none select-none font-[inherit] text-current bg-inherit font-bold hide-arrows'
+              className='peer text-left md:text-right w-full border-none outline-none select-none font-[inherit] text-sm bg-inherit font-bold hide-arrows'
               onWheel={(e) => {
                 e.currentTarget.blur();
                 e.stopPropagation();

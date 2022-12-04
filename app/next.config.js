@@ -11,8 +11,12 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: ["static.debank.com", "icons.iconarchive.com", "tokens.1inch.io"],
-    unoptimized: true,
+    domains: [
+      "static.debank.com",
+      "logos.covalenthq.com",
+      "icons.iconarchive.com",
+      "tokens.1inch.io"
+    ],
   },
 };
 
