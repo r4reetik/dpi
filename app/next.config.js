@@ -11,6 +11,7 @@ const nextConfig = {
     return config;
   },
   images: {
+    unoptimized: true,
     domains: [
       "static.debank.com",
       "logos.covalenthq.com",
