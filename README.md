@@ -220,7 +220,7 @@ Features proposed for future :
 
 - [ ] Add support for generating populated data for all kinds of transactions on UI
 - [ ] Add EDDSA signature verification in smart wallets
-- [ ] Add compatability support for ERC4337
+- [ ] Add compatability support for EIP4337
 
 <p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
