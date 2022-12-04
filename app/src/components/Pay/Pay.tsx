@@ -13,7 +13,7 @@ const Pay = ({
   next: () => void;
   setPage: Dispatch<SetStateAction<PageType>>;
 }) => {
-  const { setSelectedToken, tokens } = usePayTC();
+  const { setSelectedToken, tokens, swAddress } = usePayTC();
   const handleTokenClick = async (_token: TokenType) => {
     setSelectedToken(_token);
     setPage("btcDeposit");
@@ -21,33 +21,36 @@ const Pay = ({
   };
 
   return (
-    <div className='flex w-full flex-col gap-y-1'>
+    <div className='flex flex-col w-full gap-y-1'>
       <div className='flex mt-4 text-center justify-around items-center rounded-2xl md:min-w-[448px] py-8 text-white bg-black-800'>
         <div
           onClick={() => setPage("amountRecipient")}
-          className='flex flex-col justify-start items-center'>
-          <div className='flex justify-center items-center font-semibold rounded-full w-16 h-16 bg-primary'>
+          className='flex flex-col items-center justify-start'>
+          <div className='flex items-center justify-center w-16 h-16 font-semibold rounded-full bg-primary'>
             <UilArrowUpRight />
           </div>
           <div className='mt-1'>Send</div>
         </div>
         <div
           onClick={() => setPage("inputRecipient")}
-          className='flex flex-col justify-center items-center'>
-          <div className='flex justify-center items-center font-semibold rounded-full w-16 h-16 bg-primary'>
+          className='flex flex-col items-center justify-center'>
+          <div className='flex items-center justify-center w-16 h-16 font-semibold rounded-full bg-primary'>
             <UilQrcodeScan />
           </div>
           <div className='mt-1'>Scan & Pay</div>
         </div>
         <div
           onClick={() => setPage("history")}
-          className='flex flex-col justify-start items-center'>
-          <div className='flex justify-center items-center font-semibold rounded-full w-16 h-16 bg-primary'>
+          className='flex flex-col items-center justify-start'>
+          <div className='flex items-center justify-center w-16 h-16 font-semibold rounded-full bg-primary'>
             <UilHistory />
           </div>
           <div className='mt-1'>History</div>
         </div>
       </div>
+      <p className='my-2'>
+        Send funds at <span className='text-sm'>{swAddress}</span> to have them show up here
+      </p>
       <div className='flex flex-col items-center justify-between mt-4 text-white align-middle rounded-2xl bg-black-800'>
         <div className='my-1 px-0.5 py-1 mr-auto ml-2 text-sm font-semibold tracking-wide capitalize text-gray-500'>
           Your Assets

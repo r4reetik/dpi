@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePayTC } from "../../contexts/usePaytc";
 import ContentWrapper from "../wrappers/ContentWrapper";
 import TokenBalanceInput from "./TokenBalanceInput";
@@ -10,22 +10,32 @@ interface AmountRecipient {
   next: () => void;
 }
 
-const AmountRecipient = ({ onBack, next }: AmountRecipient) => {
+const AmountRecipient = ({ onBack }: AmountRecipient) => {
   const {
     recipient,
     selectedToken: token,
     setFullScreenLoading,
+    setSelectedToken,
     submitTransfer,
     swAddress,
+    tokens,
   } = usePayTC();
   const [showStatus, setShowStatus] = useState(false);
+
+  useEffect(() => {
+    if (!token && tokens) {
+      setSelectedToken(tokens["0x7ea6eA49B0b0Ae9c5db7907d139D9Cd3439862a1".toUpperCase()]);
+    }
+    return () => {};
+  }, [setSelectedToken, token, tokens]);
+
   return (
     <div className='grid  min-h-[80vh]'>
       <div className='grid justify-between grid-flow-col px-6 py-2'>
         <span className=''>Pay</span>
         <div
           onClick={onBack}
-          className='flex items-center w-8 h-8 p-1 rounded-full  bg-black-900 md:p-2 md:w-10 md:h-10 sm:top-6 right-4 xs:right-6 sm:right-24'>
+          className='flex items-center w-8 h-8 p-1 rounded-full bg-black-900 md:p-2 md:w-10 md:h-10 sm:top-6 right-4 xs:right-6 sm:right-24'>
           <UilArrowLeft className='flex w-full h-full m-auto text-gray-400' />
         </div>
       </div>
