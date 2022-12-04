@@ -16,8 +16,7 @@ import {
 import { SmartWalletBaseUrl } from "../constants/APIs";
 
 import { Tokens, TokenType } from "../constants/Tokens";
-import { MetaMask } from "../constants/WalletInfo";
-import { unstable_batchedUpdates } from "react-dom";
+
 import { SmartWallet } from "../pages";
 import { get, post } from "../utils/axios";
 import { getAddressFromEns } from "../utils/ens";
@@ -71,7 +70,6 @@ const PayTCProvider = ({ children }: any) => {
       );
 
       if (data) {
-        console.log("data: ", data);
         // @ts-ignore
         const { items } = data.data;
         // @ts-ignore
@@ -91,9 +89,8 @@ const PayTCProvider = ({ children }: any) => {
             });
           }
         }
-      }
-      else{
-        setTransactions(sTransactions)
+      } else {
+        setTransactions(sTransactions);
       }
     }
     setTransactions(_transactions);
@@ -229,18 +226,6 @@ const PayTCProvider = ({ children }: any) => {
     if (!isInitialized && account) signIn(account);
     return () => {};
   }, [account, isInitialized, signIn]);
-
-  useEffect(() => {
-    activate(MetaMask);
-
-    return () => {};
-  }, [activate]);
-
-  useEffect(() => {
-    activate(MetaMask);
-
-    return () => {};
-  }, [activate]);
 
   return (
     <Context.Provider
