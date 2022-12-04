@@ -25,17 +25,18 @@ import { getAddressFromEns } from "../utils/ens";
 import { addNewUser, getAddressData } from "../utils/firebase";
 import { ChainIdToNetwork } from "../constants/ChainIdNetwork";
 
-export type Flow = "connectWallet" | "pay" | "payReview" | "input" | "history"
+export type Flow = "connectWallet" | "pay" | "payReview" | "input" | "history";
 
 interface PayTcContextType {
   signIn: (_mmAddress: string) => Promise<void>;
   isInitialized: boolean;
   tokens: { [x: string]: TokenType };
-  transactions : any;
+  transactions: any;
+  swAddress: string | null;
   fullScreenLoading: boolean;
   recipient: string | null;
   setFullScreenLoading: Dispatch<SetStateAction<boolean>>;
-  submitTransfer: () => Promise<void>;
+  submitTransfer: () => Promise<any>;
 
   setRecipient: Dispatch<SetStateAction<string | null>>;
 
@@ -69,7 +70,7 @@ const PayTCProvider = ({ children }: any) => {
       );
 
       if (data) {
-        console.log('data: ', data);
+        console.log("data: ", data);
         // @ts-ignore
         const { items } = data.data;
         // @ts-ignore
@@ -80,9 +81,9 @@ const PayTCProvider = ({ children }: any) => {
             _transactions.push({
               timestamp: _t.block_signed_at,
               status: _t.successful,
-              type: hasSent? "sent" : hasReceived ? "received" : "",
+              type: hasSent ? "sent" : hasReceived ? "received" : "",
               value: _t.value,
-              displayAddress: hasSent ? _t.to_address : hasReceived ? _t.from_address :"",
+              displayAddress: hasSent ? _t.to_address : hasReceived ? _t.from_address : "",
               txHash: _t.tx_hash,
               token: _t.log_events && _t.log_events[0].sender_contract_ticker_symbol,
               decimals: _t.log_events && _t.log_events[0].sender_contract_decimals,
@@ -93,7 +94,7 @@ const PayTCProvider = ({ children }: any) => {
     }
     setTransactions(_transactions);
   }, [swAddress]);
- 
+
   const fetchAndSetBalances = useCallback(
     async (_swAddress?: string) => {
       const localSwAddress = _swAddress ?? swAddress;
@@ -155,7 +156,7 @@ const PayTCProvider = ({ children }: any) => {
       await fetchAndSetBalances(swa);
       setSwAddress(swa);
       await fetchAndSetBalances();
-      await fetchAndSetTransactions()
+      await fetchAndSetTransactions();
       setFullScreenLoading(false);
     },
     [chainId, fetchAndSetBalances, fetchAndSetTransactions, getOrDeploySmartWallet]
@@ -210,19 +211,18 @@ const PayTCProvider = ({ children }: any) => {
 
     const signature = await provider.getSigner()._signTypedData(res.domain, res.types, res.value);
     const signatureEncoded = new AbiCoder().encode(["uint256", "bytes"], [chainId, signature]);
-    const rrr = await post(`${SmartWalletBaseUrl}/transactions`, {
+    const submitTx: any = await post(`${SmartWalletBaseUrl}/transactions`, {
       chainID: chainId,
       signature: signatureEncoded,
       userOps: res.userOps,
       address: swAddress, // my sw address?
     });
-    console.log(rrr);
-    // TODO: show toast saying tx was a success
+    return submitTx;
   };
 
   useEffect(() => {
     if (!isInitialized && account) signIn(account);
-    return () => { };
+    return () => {};
   }, [account, isInitialized, signIn]);
 
   useEffect(() => {
@@ -243,6 +243,7 @@ const PayTCProvider = ({ children }: any) => {
         signIn,
         transactions,
         isInitialized,
+        swAddress: swAddress,
         tokens,
         fullScreenLoading,
         setFullScreenLoading,

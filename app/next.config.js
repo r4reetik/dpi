@@ -14,6 +14,8 @@ const nextConfig = {
     domains: [
       "static.debank.com",
       "logos.covalenthq.com",
+      "icons.iconarchive.com",
+      "tokens.1inch.io"
     ],
   },
 };
