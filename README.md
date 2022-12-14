@@ -196,7 +196,7 @@ For both app and backend environment :
 
 # Usage
 
-![Architecture Diagram][Architecture]
+![Architecture Diagram][architecture]
 
 DPI UX is implemented as a web app which can be used to send and receive payments across chains.As a payments interface it is non-custodial and the user is in full control of their assets.Transfers are the key feature of the app and it is powered by Connext to enable cross chain transfers.Push protocol is used to enable reliable transaction notification.Contracts are deployed on every EVM based chains and the user can deploy smart wallets on any of the supported chains.
 The user can :
