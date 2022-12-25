@@ -58,9 +58,7 @@ const AmountRecipient = ({ onBack }: AmountRecipient) => {
             setFullScreenLoading(true);
             const res = await submitTransfer();
             setFullScreenLoading(false);
-            if (res.hash) {
-              setShowStatus(true);
-            }
+            if (res.txHash) setShowStatus(true);
           }}
           className='text-xl  bg-primary p-4 m-4 max-h-[450px]'>
           Send
