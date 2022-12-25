@@ -15,7 +15,7 @@
     <a href="https://github.com/r4reetik/dpi"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="">View Demo</a>
+    <a href="https://youtu.be/kym4XXhxJOQ">View Demo</a>
     ·
     <a href="https://github.com/r4reetik/dpi/issues">Report Bug</a>
     ·
@@ -47,8 +47,6 @@
 <!-- ABOUT THE PROJECT -->
 
 # About The Project
-
-[![Product Name Screen Shot][screenshot]](https://example.com)
 
 DPI (yes it's inspired from UPI) stands for decentalized payment interface, it is a non-custodial payment interface for on chain payments.Users are provided with a single DPI ID which hold their assets and it the same for all the EVM based chains(ain't that cool 🤯).Powered by Connext to enable cross chain bridging DPI offers quick and resilient mode of transfers both on the host chain and for payments across chains.Payments are gasless which are verified and submitted through smart wallets.
 DPI operates on three layers :
@@ -250,4 +248,4 @@ This repo is a part of the project DPI (Decentralized Payment Interface) which i
 [push]: https://img.shields.io/badge/-Push-yellow
 [covalent-url]: https://www.covalenthq.com
 [covalent]: https://img.shields.io/badge/-Covalent-blue
-[architecture]: images/achitecture.png
+[architecture]: images/Architecture.png
