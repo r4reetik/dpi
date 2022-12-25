@@ -7,19 +7,13 @@
     <img src="images/logo.svg" alt="Logo" height="80">
   </a>
 
-  <h3 align="center">DPI</h3>
-
   <p align="center">
     A secure cross chain smart wallet.
-    <br />
-    <a href="https://github.com/r4reetik/dpi"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://youtu.be/kym4XXhxJOQ">View Demo</a>
     ·
-    <a href="https://github.com/r4reetik/dpi/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/r4reetik/dpi/issues">Request Feature</a>
+    <a href="#screenshots">Screenshots</a>
   </p>
 </div>
 
@@ -41,29 +35,45 @@
     <li><a href="#usage">Usage</a></li>
     <li><a href="#road-map">Road Map</a></li>
      <li><a href="#acknowledgments">Acknowledgments</a></li>
-    
+
   </ol>
 
 <!-- ABOUT THE PROJECT -->
 
+</br>
+
 # About The Project
 
-DPI (yes it's inspired from UPI) stands for decentalized payment interface, it is a non-custodial payment interface for on chain payments.Users are provided with a single DPI ID which hold their assets and it the same for all the EVM based chains(ain't that cool 🤯).Powered by Connext to enable cross chain bridging DPI offers quick and resilient mode of transfers both on the host chain and for payments across chains.Payments are gasless which are verified and submitted through smart wallets.
+DPI (yes it's inspired from UPI) stands for decentralized payment interface, it is a non-custodial payment interface for on chain payments.Users are provided with a single DPI ID which hold their assets and it the same for all the EVM based chains(ain't that cool 🤯).Powered by Connext to enable cross chain bridging DPI offers quick and resilient mode of transfers both on the host chain and for payments across chains.Payments are gasless which are verified and submitted through smart wallets.
 DPI operates on three layers :
 
 1. Smart wallet contract deployer :
    Smart wallets are deployed via a factory contract which ensures and predetermines the address of the smart wallet contract the user can deploy.
 1. Smart wallet contract :
-   Smart wallets contain exec() function which is provided with data in the form of user operations which are executed in a single transaction. ECDSASmartWallet is responisble for verifying signature for the data received from the user.The injected provider configured to any chain can be used to sign transactions for any other chain.
+   Smart wallets contain exec() function which is provided with data in the form of user operations which are executed in a single transaction. ECDSASmartWallet is responsible for verifying signature for the data received from the user.The injected provider configured to any chain can be used to sign transactions for any other chain.
 
 1. DPI UX:
    This layer generates data for user operations ,displays data or context , gets them signed by the user and bundles them into a single call.
 
 Polygon - best Defi project(s) , best UX
 Deployed Contract links :
-Polygon : https://mumbai.polygonscan.com/address/0x0bfe22aACCeEDE01FAa0d24651431Fc2f8cc4437
+Polygon : <https://mumbai.polygonscan.com/address/0x0bfe22aACCeEDE01FAa0d24651431Fc2f8cc4437>
 
-<p align="right">(<a href="#about-the-project">back to top</a>)</p>
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
+
+# Screenshots
+
+<p float="left">
+  <img src="images/ss-1.jpg" width="32%" />
+  <img src="images/ss-2.jpg" width="32%" /> 
+  <img src="images/ss-3.jpg" width="32%" />
+  </br>
+  <img src="images/ss-4.jpg" width="32%" />
+  <img src="images/ss-5.jpg" width="32%" />
+  <img src="images/ss-6.jpg" width="32%" />
+</p>
+
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
 
 <!-- SECURITY VERIFICATIONS -->
 
@@ -127,12 +137,12 @@ return address(uint160(uint(keccak256(
                     )))))));
 ```
 
-- This ensure that the user receives the generated address as their smart walllet address no matter when the depeploy their contract.
-  - Funds can be transfered to address before a contract exists at the address and the funds will be available to the user when the contract is deployed.
+- This ensure that the user receives the generated address as their smart wallet address no matter when the deploy their contract.
+  - Funds can be transferred to address before a contract exists at the address and the funds will be available to the user when the contract is deployed.
 
-The contract implementations can be found in /backend/contracts (https://github.com/r4reetik/dpi/tree/main/backend/contracts)
+The contract implementations can be found in /backend/contracts (<https://github.com/r4reetik/dpi/tree/main/backend/contracts>)
 
-<p align="right">(<a href="#about-the-project">back to top</a>)</p>
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
 
 <!--SIGNING DATA -->
 
@@ -172,7 +182,7 @@ const domain = {
 
 ```
 
-<p align="right">(<a href="#about-the-project">back to top</a>)</p>
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
 
 # Built With
 
@@ -182,7 +192,7 @@ const domain = {
 - [![Push Protocol][push]][push-protocol-url]
 - [![Covalent][covalent]][covalent-url]
 
-<p align="right">(<a href="#about-the-project">back to top</a>)</p>
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
 
 # Installation
 
@@ -190,7 +200,7 @@ For both app and backend environment :
 
 1. yarn
 
-<p align="right">(<a href="#about-the-project">back to top</a>)</p>
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
 
@@ -202,19 +212,19 @@ DPI UX is implemented as a web app which can be used to send and receive payment
 The user can :
 
 1. Create a smart wallet at deterministic address.
-2. Fnnd the smart wallet with any supported token.
+2. Fund the smart wallet with any supported token.
 3. Send and receive payments across chains via ENS or public addresses.
 4. Use QR code to send and receive payments.
 
-<p align="right">(<a href="#about-the-project">back to top</a>)</p>
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
 
 <!-- ROADMAP -->
 
 # Road Map
 
-- [x] Desinged and implemented smart wallet and factory contracts
+- [x] Designed and implemented smart wallet and factory contracts
 - [x] Added ECDSA verification for smart wallet
-- [x] Desined and implemented DPI UX
+- [x] Designed and implemented DPI UX
 - [x] Adder support for ERC20 tokens transfer and cross chain transfers
 - [x] Added support for qr scanning
 
@@ -222,9 +232,9 @@ Features proposed for future :
 
 - [ ] Add support for generating populated data for all kinds of transactions on UI
 - [ ] Add EDDSA signature verification in smart wallets
-- [ ] Add compatability support for EIP4337
+- [ ] Add compatibility support for EIP4337
 
-<p align="right">(<a href="#about-the-project">back to top</a>)</p>
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
 
 <!-- ACKNOWLEDGMENTS -->
 
@@ -232,12 +242,11 @@ Features proposed for future :
 
 This repo is a part of the project DPI (Decentralized Payment Interface) which is a part of the hackathon hosted by ETHIndia and Devfolio.
 
-<p align="right">(<a href="#about-the-project">back to top</a>)</p>
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[product-screenshot]: images/screenshot.png
 [next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [next-url]: https://nextjs.org/
 [react.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
